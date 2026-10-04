@@ -100,6 +100,12 @@ export class BandwidthComponent implements OnInit, OnDestroy {
     this.currentPageTitle.set(ROUTE_TITLES[route] ?? 'Dashboard');
   }
 
+  onLogoClick(): void {
+    if (!this.navOpen()) {
+      this.navOpen.set(true);
+    }
+  }
+
   onClickLogout(){
     this.authService.logout()
     this.messageService.add({

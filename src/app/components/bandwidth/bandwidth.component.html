@@ -8,13 +8,34 @@
                     <p-sidebar-aside>
                         <p-sidebar-panel>
                             <p-sidebar-header>
-                                <div class="app-brand">
+                                <div
+                                    class="app-brand"
+                                    role="button"
+                                    tabindex="0"
+                                    aria-label="Expand navigation"
+                                    (click)="onLogoClick()"
+                                    (keydown.enter)="onLogoClick()"
+                                    (keydown.space)="onLogoClick(); $event.preventDefault()"
+                                >
                                     <span class="app-brand-mark" aria-hidden="true">
                                         <span></span>
                                         <span></span>
                                         <span></span>
                                     </span>
                                     <span class="app-brand-name">BandWidth</span>
+                                    <button
+                                        pButton
+                                        pSidebarTrigger
+                                        target="nav"
+                                        severity="secondary"
+                                        text
+                                        size="small"
+                                        class="sidebar-toggle"
+                                        aria-label="Toggle navigation"
+                                        (click)="$event.stopPropagation()"
+                                    >
+                                        <svg data-p-icon="sidebar"></svg>
+                                    </button>
                                 </div>
                             </p-sidebar-header>
                             <p-sidebar-content>
@@ -59,9 +80,6 @@
                 <p-sidebar-main>
                     <header class="top-navbar">
                         <div class="navbar-start">
-                            <button pButton pSidebarTrigger target="nav" severity="secondary" text size="small" aria-label="Toggle navigation">
-                                <svg data-p-icon="sidebar"></svg>
-                            </button>
                             <span class="page-title">{{ currentPageTitle() }}</span>
                         </div>
                         <div class="navbar-end">

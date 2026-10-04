@@ -83,6 +83,12 @@ p-sidebar-main {
     font-size: 1.2rem;
     font-weight: 700;
     letter-spacing: -0.03em;
+    cursor: pointer;
+}
+
+.sidebar-toggle {
+    display: flex;
+    margin-left: auto;
 }
 
 .app-brand-mark {
