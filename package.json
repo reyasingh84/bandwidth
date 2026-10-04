@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "prebuild": "node tools/generate-environment.mjs",
+    "prestart": "node tools/generate-environment.mjs",
+    "pretest": "node tools/generate-environment.mjs",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
@@ -17,6 +20,9 @@
     "@angular/forms": "^22.1.0",
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
+    "@primeicons/angular": "^8.0.2",
+    "@primeuix/themes": "^3.0.1",
+    "primeng": "^22.1.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },
