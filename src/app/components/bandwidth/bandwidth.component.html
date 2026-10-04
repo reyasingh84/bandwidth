@@ -57,13 +57,16 @@
                     </p-sidebar-aside>
                 </p-sidebar>
                 <p-sidebar-main>
-                    <!-- <app-navbar></app-navbar> -->
-                    
-                    <header class="flex h-12 items-center gap-2 border-b border-surface-200 dark:border-surface-700 px-4">
-                        <button pButton pSidebarTrigger target="nav" severity="secondary" text size="small">
-                            <svg data-p-icon="sidebar"></svg>
-                        </button>
-                        <span class="text-sm font-medium flex-1">Dashboard</span>
+                    <header class="top-navbar">
+                        <div class="navbar-start">
+                            <button pButton pSidebarTrigger target="nav" severity="secondary" text size="small" aria-label="Toggle navigation">
+                                <svg data-p-icon="sidebar"></svg>
+                            </button>
+                            <span class="page-title">{{ currentPageTitle() }}</span>
+                        </div>
+                        <div class="navbar-end">
+                            <span class="user-avatar" aria-label="Current user">{{ userInitials }}</span>
+                        </div>
                     </header>
                     <router-outlet />
                 </p-sidebar-main>

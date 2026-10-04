@@ -1,5 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { NavigationEnd, Router, RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { Home } from '@primeicons/angular/home';
@@ -26,22 +26,36 @@ import { SIDEBAR_NAVIGATION } from '../../constants/sidebar-navigation';
 import { AuthService } from '../../services/auth.service';
 import { MessageService } from 'primeng/api';
 import { User as UserModel } from '../../models/user.model';
+import { UsersService } from '../../services/users/users.service';
+import { ROUTE_TITLES } from '../../constants/route-titles';
+import { filter, Subscription } from 'rxjs';
 @Component({
   imports: [SidebarModule, ButtonModule, CardModule, RouterLink, RouterOutlet, RouterLinkActive, PIcon, Comment, Sidebar, Cog, Clipboard, Users, User, ChevronDown, ChartBar, Bell, Search, SignOut, Home, FileCheck, ListCheck, Columns2, ChartLine],
   selector: 'bw-bandwidth',
   styleUrl: './bandwidth.component.css',
   templateUrl: './bandwidth.component.html',
 })
-export class BandwidthComponent implements OnInit {
+export class BandwidthComponent implements OnInit, OnDestroy {
   protected readonly navigation = this.getNavigationForCurrentUser();
   authService = inject(AuthService);
   messageService = inject(MessageService);
+  usersService = inject(UsersService);
+  router = inject(Router);
+  currentPageTitle = signal('Dashboard');
+  private routerSubscription?: Subscription;
 
   isMobile = signal(false);
   navOpen = signal(true);
   open = signal(false);
   private mql?: MediaQueryList;
   private mqlListener?: (e: MediaQueryListEvent) => void;
+
+  get userInitials(): string {
+    const user = this.usersService.getUserInfo();
+    const firstInitial = user?.first_name?.trim().charAt(0) ?? '';
+    const lastInitial = user?.last_name?.trim().charAt(0) ?? '';
+    return `${firstInitial}${lastInitial}`.toUpperCase() || 'U';
+  }
 
   private getNavigationForCurrentUser() {
     const userDetails = localStorage.getItem('userDetails');
@@ -67,6 +81,10 @@ export class BandwidthComponent implements OnInit {
 
   ngOnInit() {
       if (typeof window === 'undefined') return;
+      this.updatePageTitle(this.router.url);
+      this.routerSubscription = this.router.events
+        .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
+        .subscribe((event) => this.updatePageTitle(event.urlAfterRedirects));
       this.mql = window.matchMedia('(max-width: 1023px)');
       this.isMobile.set(this.mql.matches);
       this.navOpen.set(!this.mql.matches);
@@ -75,6 +93,11 @@ export class BandwidthComponent implements OnInit {
           this.navOpen.set(!e.matches);
       };
       this.mql.addEventListener('change', this.mqlListener);
+  }
+
+  private updatePageTitle(url: string): void {
+    const route = url.split('?')[0].replace(/\/+$/, '') || '/dashboard';
+    this.currentPageTitle.set(ROUTE_TITLES[route] ?? 'Dashboard');
   }
 
   onClickLogout(){
@@ -86,6 +109,7 @@ export class BandwidthComponent implements OnInit {
   }
 
   ngOnDestroy() {
+      this.routerSubscription?.unsubscribe();
       this.mql?.removeEventListener('change', this.mqlListener!);
   }
 }

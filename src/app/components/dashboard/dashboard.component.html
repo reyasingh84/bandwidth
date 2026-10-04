@@ -1,1 +1,69 @@
-<p>dashboard.component works!</p>
+<section class="dashboard-greeting">
+  <h1>Good morning, {{ userInfo?.first_name || 'there' }} <span aria-hidden="true">👋</span></h1>
+  <p>Here's what's happening across your organization today.</p>
+</section>
+
+<div class="stats-grid">
+  <p-card class="dashboard-tile">
+    <div class="tile-content">
+      <div class="tile-icon tile-icon-total">
+        <svg data-p-icon="clipboard"></svg>
+      </div>
+      <strong class="tile-value">{{ allTaskStats().total }}</strong>
+      <span class="tile-label">Total Tasks</span>
+    </div>
+  </p-card>
+
+  <p-card class="dashboard-tile">
+    <div class="tile-content">
+      <div class="tile-icon tile-icon-progress">
+        <svg data-p-icon="clock"></svg>
+      </div>
+      <strong class="tile-value">{{ allTaskStats().in_progress }}</strong>
+      <span class="tile-label">In Progress</span>
+    </div>
+  </p-card>
+
+  <p-card class="dashboard-tile">
+    <div class="tile-content">
+      <div class="tile-icon tile-icon-completed">
+        <svg data-p-icon="check-circle"></svg>
+      </div>
+      <strong class="tile-value">{{ allTaskStats().closed }}</strong>
+      <span class="tile-label">Completed</span>
+    </div>
+  </p-card>
+
+  <p-card class="dashboard-tile">
+    <div class="tile-content">
+      <div class="tile-icon tile-icon-overdue">
+        <svg data-p-icon="exclamation-triangle"></svg>
+      </div>
+      <strong class="tile-value">{{ overdueTaskStats().total }}</strong>
+      <span class="tile-label">Overdue</span>
+    </div>
+  </p-card>
+</div>
+
+<div class="charts-grid">
+  <p-card class="chart-card">
+    <div class="chart-heading">
+      <h2>Task Status</h2>
+      <span>All tasks by status</span>
+    </div>
+    <div class="chart-wrapper">
+      <p-chart type="doughnut" [data]="taskStatusChartData()" [options]="chartOptions"></p-chart>
+    </div>
+  </p-card>
+
+  <p-card class="chart-card">
+    <div class="chart-heading">
+      <h2>Overdue Tasks</h2>
+      <span>Overdue tasks by status</span>
+    </div>
+    <div class="chart-wrapper">
+      <p-chart type="pie" [data]="overdueStatusChartData()" [options]="chartOptions"></p-chart>
+    </div>
+  </p-card>
+</div>
+

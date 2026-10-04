@@ -1,0 +1,186 @@
+.dashboard-greeting,
+.stats-grid,
+.charts-grid {
+    width: 100%;
+}
+
+:host {
+    display: block;
+    min-height: 100%;
+}
+
+.dashboard-greeting,
+.stats-grid,
+.charts-grid {
+    box-sizing: border-box;
+}
+
+.dashboard-greeting {
+    padding: 2rem 1.25rem 1rem;
+    background: #f5f7fb;
+}
+
+.dashboard-greeting h1 {
+    margin: 0;
+    color: #17213a;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+}
+
+.dashboard-greeting h1 span {
+    display: inline-block;
+    margin-left: 0.35rem;
+}
+
+.dashboard-greeting p {
+    margin: 0.55rem 0 0;
+    color: #71809d;
+    font-size: 1rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.1rem;
+    padding: 1.25rem;
+    background: #f5f7fb;
+}
+
+:host ::ng-deep .dashboard-tile {
+    border: 1px solid #e1e6ef;
+    border-radius: 0.65rem;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(23, 33, 58, 0.03);
+}
+
+:host ::ng-deep .dashboard-tile .p-card-body {
+    padding: 1.35rem;
+}
+
+.tile-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.tile-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-bottom: 0.35rem;
+    border-radius: 0.45rem;
+}
+
+.tile-icon svg {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.tile-icon-total {
+    color: #3964d8;
+    background: #edf2ff;
+}
+
+.tile-icon-progress {
+    color: #4b7de0;
+    background: #eff4ff;
+}
+
+.tile-icon-completed {
+    color: #24946d;
+    background: #edf8f3;
+}
+
+.tile-icon-overdue {
+    color: #e45050;
+    background: #fff0f0;
+}
+
+.tile-value {
+    color: #17213a;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.tile-label {
+    color: #71809d;
+    font-size: 0.95rem;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.1rem;
+    padding: 0 1.25rem 1.25rem;
+    background: #f5f7fb;
+}
+
+:host ::ng-deep .chart-card {
+    min-width: 0;
+    border: 1px solid #e1e6ef;
+    border-radius: 0.65rem;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(23, 33, 58, 0.03);
+}
+
+:host ::ng-deep .chart-card .p-card-body {
+    padding: 1.25rem;
+}
+
+.chart-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.chart-heading h2 {
+    margin: 0;
+    color: #17213a;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.chart-heading span {
+    color: #71809d;
+    font-size: 0.82rem;
+}
+
+.chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 18rem;
+}
+
+:host ::ng-deep .chart-wrapper p-chart {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+:host ::ng-deep .chart-wrapper canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem 1rem;
+    }
+}
