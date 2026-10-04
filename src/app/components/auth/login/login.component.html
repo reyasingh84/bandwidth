@@ -1,0 +1,65 @@
+<main class="login-page">
+    <section class="brand-panel" aria-label="BandWidth introduction">
+        <div class="brand">
+            <span class="brand-mark" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+            <span class="brand-name">BandWidth</span>
+        </div>
+
+        <div class="brand-message">
+            <p class="eyebrow">WORK BETTER TOGETHER</p>
+            <h1>Where teams get<br>things done.</h1>
+            <p class="brand-description">
+                Coordinate work across teams, track progress in real time, and ship with confidence.
+            </p>
+        </div>
+    </section>
+
+    <section class="form-panel" aria-labelledby="login-title">
+        <div class="login-card">
+            <div class="card-heading">
+                <p class="card-kicker">WELCOME BACK</p>
+                <h2 id="login-title">Sign in to BandWidth</h2>
+                <p>Enter your work email and password to continue.</p>
+            </div>
+
+            <form [formGroup]="loginForm" (ngSubmit)="onFormSubmit()" class="login-form">
+                <div class="field">
+                    <label for="email">Email address</label>
+                    <input
+                        pInputText
+                        id="email"
+                        type="email"
+                        placeholder="you@company.com"
+                        autocomplete="email"
+                        formControlName="email">
+                </div>
+
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input
+                        pInputPassword
+                        id="password"
+                        type="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        formControlName="password">
+                </div>
+
+                <label class="remember-me">
+                    <input type="checkbox">
+                    <span>Remember me for 30 days</span>
+                </label>
+
+                <button pButton type="submit" class="submit-button">
+                    <span>Sign in</span>
+                </button>
+            </form>
+
+            <p class="invitation-note">Access is by invitation only. Contact your administrator to create an account.</p>
+        </div>
+    </section>
+</main>

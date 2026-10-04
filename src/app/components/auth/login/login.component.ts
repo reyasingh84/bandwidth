@@ -1,0 +1,57 @@
+import { Component, inject, OnInit } from '@angular/core';
+import {ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators} from '@angular/forms';
+import { AuthService } from '../../../services/auth.service';
+import { Router } from '@angular/router';
+import { isValidAuthToken } from '../../../utils/auth-token';
+import { InputPasswordModule } from 'primeng/inputpassword';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+
+@Component({
+  imports: [ReactiveFormsModule, FormsModule, InputPasswordModule, InputTextModule, ButtonModule],
+  selector: 'bw-login',
+  styleUrl: './login.component.css',
+  templateUrl: './login.component.html',
+})
+export class LoginComponent implements OnInit {
+
+  authService = inject(AuthService);
+  router = inject(Router);
+
+  loginForm = new FormGroup({
+    email: new FormControl<string>('', [Validators.required, Validators.email]),
+    password: new FormControl<string>('', [Validators.required, Validators.minLength(8)])
+  })
+
+  ngOnInit(): void {
+    const token = localStorage.getItem('token');
+
+    if (token && isValidAuthToken(token)) {
+      this.router.navigate(['']);
+    }else{
+      localStorage.clear();
+    }
+  }
+
+  onFormSubmit(){
+    const formVal = this.loginForm.value
+    const email = formVal.email;
+    const password = formVal.password;
+
+    const finalEmail =  email ? email : "";
+    const finalPassword = password ? password : "";
+
+    if (!finalEmail || !finalPassword){
+      return;
+    }
+
+    this.authService.login(finalEmail, finalPassword).subscribe({
+      next: (res)=> {
+        localStorage.setItem("token", res?.access_token)
+        this.router.navigate([""])
+      },
+      error: (err)=> {console.log(err)},
+      complete: ()=> {console.log("completed")}
+    })
+  }
+}
