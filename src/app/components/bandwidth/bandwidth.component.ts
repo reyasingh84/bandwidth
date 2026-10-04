@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink, RouterOutlet, RouterLinkActive } from '@angular/router';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
@@ -23,6 +23,9 @@ import { Clipboard } from '@primeicons/angular/clipboard';
 import { CardModule } from 'primeng/card';
 import { PIcon } from '@primeicons/angular/p-icon';
 import { SIDEBAR_NAVIGATION } from '../../constants/sidebar-navigation';
+import { AuthService } from '../../services/auth.service';
+import { MessageService } from 'primeng/api';
+import { User as UserModel } from '../../models/user.model';
 @Component({
   imports: [SidebarModule, ButtonModule, CardModule, RouterLink, RouterOutlet, RouterLinkActive, PIcon, Comment, Sidebar, Cog, Clipboard, Users, User, ChevronDown, ChartBar, Bell, Search, SignOut, Home, FileCheck, ListCheck, Columns2, ChartLine],
   selector: 'bw-bandwidth',
@@ -30,25 +33,59 @@ import { SIDEBAR_NAVIGATION } from '../../constants/sidebar-navigation';
   templateUrl: './bandwidth.component.html',
 })
 export class BandwidthComponent implements OnInit {
-  protected readonly navigation = SIDEBAR_NAVIGATION;
+  protected readonly navigation = this.getNavigationForCurrentUser();
+  authService = inject(AuthService);
+  messageService = inject(MessageService);
 
   isMobile = signal(false);
-    navOpen = signal(true);
-    open = signal(false);
-    private mql?: MediaQueryList;
-    private mqlListener?: (e: MediaQueryListEvent) => void;
-    ngOnInit() {
-        if (typeof window === 'undefined') return;
-        this.mql = window.matchMedia('(max-width: 1023px)');
-        this.isMobile.set(this.mql.matches);
-        this.navOpen.set(!this.mql.matches);
-        this.mqlListener = (e) => {
-            this.isMobile.set(e.matches);
-            this.navOpen.set(!e.matches);
-        };
-        this.mql.addEventListener('change', this.mqlListener);
+  navOpen = signal(true);
+  open = signal(false);
+  private mql?: MediaQueryList;
+  private mqlListener?: (e: MediaQueryListEvent) => void;
+
+  private getNavigationForCurrentUser() {
+    const userDetails = localStorage.getItem('userDetails');
+
+    if (!userDetails) {
+      return [];
     }
-    ngOnDestroy() {
-        this.mql?.removeEventListener('change', this.mqlListener!);
+
+    try {
+      const user = JSON.parse(userDetails) as Partial<UserModel>;
+      const role = typeof user.role === 'string' ? user.role.trim().toLowerCase() : '';
+
+      return SIDEBAR_NAVIGATION
+        .map((group) => ({
+          ...group,
+          items: group.items.filter((item) => item.roles.some((allowedRole) => allowedRole === role)),
+        }))
+        .filter((group) => group.items.length > 0);
+    } catch {
+      return [];
     }
+  }
+
+  ngOnInit() {
+      if (typeof window === 'undefined') return;
+      this.mql = window.matchMedia('(max-width: 1023px)');
+      this.isMobile.set(this.mql.matches);
+      this.navOpen.set(!this.mql.matches);
+      this.mqlListener = (e) => {
+          this.isMobile.set(e.matches);
+          this.navOpen.set(!e.matches);
+      };
+      this.mql.addEventListener('change', this.mqlListener);
+  }
+
+  onClickLogout(){
+    this.authService.logout()
+    this.messageService.add({
+      summary: "Successfully Logged Out!",
+      severity: "success"
+    })
+  }
+
+  ngOnDestroy() {
+      this.mql?.removeEventListener('change', this.mqlListener!);
+  }
 }

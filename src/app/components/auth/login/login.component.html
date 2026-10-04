@@ -35,7 +35,17 @@
                         type="email"
                         placeholder="you@company.com"
                         autocomplete="email"
+                        aria-describedby="email-error"
                         formControlName="email">
+                    @if (loginForm.controls.email.invalid && (loginForm.controls.email.touched || loginForm.controls.email.dirty)) {
+                        <small id="email-error" class="field-error">
+                            @if (loginForm.controls.email.hasError('required')) {
+                                Email address is required.
+                            } @else if (loginForm.controls.email.hasError('email')) {
+                                Enter a valid email address.
+                            }
+                        </small>
+                    }
                 </div>
 
                 <div class="field">
@@ -46,7 +56,17 @@
                         type="password"
                         placeholder="Enter your password"
                         autocomplete="current-password"
+                        aria-describedby="password-error"
                         formControlName="password">
+                    @if (loginForm.controls.password.invalid && (loginForm.controls.password.touched || loginForm.controls.password.dirty)) {
+                        <small id="password-error" class="field-error">
+                            @if (loginForm.controls.password.hasError('required')) {
+                                Password is required.
+                            } @else if (loginForm.controls.password.hasError('minlength')) {
+                                Password must be at least 8 characters.
+                            }
+                        </small>
+                    }
                 </div>
 
                 <label class="remember-me">
@@ -54,7 +74,7 @@
                     <span>Remember me for 30 days</span>
                 </label>
 
-                <button pButton type="submit" class="submit-button">
+                <button pButton type="submit" class="submit-button" [disabled]="loginForm.invalid">
                     <span>Sign in</span>
                 </button>
             </form>
