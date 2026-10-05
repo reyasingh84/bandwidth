@@ -52,6 +52,36 @@ p-sidebar-main {
     gap: 0;
 }
 
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.25rem 0.35rem 0.25rem 0.8rem;
+    border: 1px solid #e1e6ef;
+    border-radius: 999px;
+    background: #f8f9fc;
+}
+
+.user-profile-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.15;
+}
+
+.user-profile-name {
+    color: #17213a;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.user-profile-role {
+    margin-top: 0.2rem;
+    color: #71809d;
+    font-size: 0.68rem;
+    font-weight: 500;
+}
+
 .user-avatar {
     display: inline-flex;
     align-items: center;
@@ -60,7 +90,6 @@ p-sidebar-main {
     height: 2rem;
     border-radius: 50%;
     color: #fff;
-    background: #3d5cdb;
     font-size: 0.78rem;
     font-weight: 700;
 }
@@ -156,8 +185,27 @@ p-sidebar-main {
     height: 1.05rem;
 }
 
+.logout-button {
+    color: #c2415d;
+}
+
+.logout-button:hover {
+    background: #fff1f2;
+    color: #b42345;
+}
+
 @media (max-width: 1023px) {
     .mobile-logo-toggle {
         display: inline-flex;
+    }
+
+    .user-profile-details {
+        display: none;
+    }
+
+    .user-profile {
+        padding: 0.2rem;
+        border: 0;
+        background: transparent;
     }
 }

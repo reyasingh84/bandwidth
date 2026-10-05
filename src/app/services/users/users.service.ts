@@ -2,6 +2,7 @@ import { inject, Service } from '@angular/core';
 import { User } from '../../models/user.model';
 import { HttpClient } from '@angular/common/http';
 import { BASE_URL } from '../../constants/api.constants';
+import { Observable } from 'rxjs';
 
 @Service()
 export class UsersService {
@@ -23,7 +24,7 @@ export class UsersService {
     }
 
 
-    getUsersByTeamId(teamId: string){
+    getUsersByTeamId(teamId: string): Observable<any>{
         const url = `${BASE_URL}/admin/users`
         return this.http.get(url)
     }

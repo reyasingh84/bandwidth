@@ -69,12 +69,7 @@
                     }
                 </div>
 
-                <label class="remember-me">
-                    <input type="checkbox">
-                    <span>Remember me for 30 days</span>
-                </label>
-
-                <button pButton type="submit" class="submit-button" [disabled]="loginForm.invalid">
+                <button pButton type="submit" class="submit-button" [disabled]="loginForm.invalid || isSigningIn" [loading]="isSigningIn">
                     <span>Sign in</span>
                 </button>
             </form>

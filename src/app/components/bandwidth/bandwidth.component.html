@@ -67,7 +67,7 @@
                             <p-sidebar-footer>
                                 <p-sidebar-menu>
                                     <p-sidebar-menu-item>
-                                        <button pSidebarMenuButton (click)="onClickLogout()">
+                                        <button class="logout-button" pSidebarMenuButton (click)="onClickLogout()">
                                             <svg data-p-icon="sign-out"></svg>
                                             <span>Logout</span>
                                         </button>
@@ -100,7 +100,19 @@
                             <span class="page-title">{{ currentPageTitle() }}</span>
                         </div>
                         <div class="navbar-end">
-                            <span class="user-avatar" aria-label="Current user">{{ userInitials }}</span>
+                            <div class="user-profile" aria-label="Current user">
+                                <div class="user-profile-details">
+                                    <span class="user-profile-name">{{ userDisplayName }}</span>
+                                    <span class="user-profile-role">{{ userRole }}</span>
+                                </div>
+                                <span
+                                    class="user-avatar"
+                                    [style.background-color]="avatarColor"
+                                    aria-hidden="true"
+                                >
+                                    {{ userInitials }}
+                                </span>
+                            </div>
                         </div>
                     </header>
                     <router-outlet />

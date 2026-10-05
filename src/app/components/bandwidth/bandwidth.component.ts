@@ -47,6 +47,8 @@ export class BandwidthComponent implements OnInit, OnDestroy {
   isMobile = signal(false);
   navOpen = signal(true);
   open = signal(false);
+  readonly avatarColors = ['#3d5cdb', '#0f766e', '#b45309', '#7c3aed', '#be123c'];
+  readonly avatarColor = this.avatarColors[Math.floor(Math.random() * this.avatarColors.length)];
   private mql?: MediaQueryList;
   private mqlListener?: (e: MediaQueryListEvent) => void;
 
@@ -55,6 +57,17 @@ export class BandwidthComponent implements OnInit, OnDestroy {
     const firstInitial = user?.first_name?.trim().charAt(0) ?? '';
     const lastInitial = user?.last_name?.trim().charAt(0) ?? '';
     return `${firstInitial}${lastInitial}`.toUpperCase() || 'U';
+  }
+
+  get userDisplayName(): string {
+    const user = this.usersService.getUserInfo();
+    const name = `${user?.first_name ?? ''} ${user?.last_name ?? ''}`.trim();
+    return name || user?.username || user?.email || 'User';
+  }
+
+  get userRole(): string {
+    const role = this.usersService.getUserInfo()?.role?.trim();
+    return role ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() : 'User';
   }
 
   private getNavigationForCurrentUser() {

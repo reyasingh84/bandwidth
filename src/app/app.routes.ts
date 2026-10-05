@@ -20,7 +20,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent, canActivate: [roleGuard(['admin', 'director', 'manager', 'employee'])] },
       { path: 'teams', component: TeamsComponent , canActivate: [roleGuard(['admin', 'director'])]},
-      { path: 'all-tasks', component:TasksComponent},
+      { path: 'all-tasks', component:TasksComponent, canActivate: [roleGuard(['admin', 'director'])]},
       { path: '**', redirectTo: 'dashboard' },
     ],
   },

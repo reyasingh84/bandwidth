@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
   messageService = inject(MessageService);
+  isSigningIn = false;
 
   loginForm = new FormGroup({
     email: new FormControl<string>('', [Validators.required, Validators.email]),
@@ -48,6 +49,7 @@ export class LoginComponent implements OnInit {
       return;
     }
 
+    this.isSigningIn = true;
     this.authService.login(finalEmail, finalPassword).subscribe({
       next: (res)=> {
         localStorage.setItem("token", res?.response?.access_token);
@@ -62,13 +64,13 @@ export class LoginComponent implements OnInit {
       },
       error: (err)=> {
         console.log(err);
+        this.isSigningIn = false;
         this.messageService.add({
           severity: "error",
           summary: "Login Failed!",
           detail: "Please check your credentials!"
         })
       },
-      complete: ()=> {console.log("completed")}
     })
   }
 }

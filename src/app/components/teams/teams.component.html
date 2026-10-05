@@ -1,1 +1,129 @@
-<p>teams.component works!</p>
+
+@if (isLoadingData()) {
+    <div class="teams-loader" role="status" aria-live="polite">
+        <svg data-p-icon="spinner" [spin]="true" [size]="36"></svg>
+        <span>Loading Please Wait...</span>
+    </div>
+}@else {
+    <section class="teams-page">
+        <header class="teams-header">
+            <div>
+                <h1>Teams</h1>
+                <p>{{ allTeamsList().length }} teams in your organization</p>
+            </div>
+            @if (isAdmin) {
+                <button
+                    pButton
+                    type="button"
+                    severity="primary"
+                    class="add-team-button team-primary-button"
+                    (click)="onClickAddTeam()"
+                >
+                    Add team
+                </button>
+            }
+        </header>
+
+        @if (allTeamsList().length) {
+            <div class="teams-grid">
+                @for (team of allTeamsList(); track team.id) {
+                    <article class="team-card">
+                        <div class="team-card-header">
+                            <div>
+                                <h2>{{ team.name }}</h2>
+                                <p>{{ team.description }}</p>
+                            </div>
+
+                            <span class="team-icon" aria-hidden="true">
+                                <svg data-p-icon="users"></svg>
+                            </span>
+                        </div>
+
+                        <div class="team-card-details">
+                            <span class="team-short-name">{{ team.short_name }}</span>
+                            <span>{{ team.short_name }} team</span>
+                        </div>
+
+                        <div class="team-card-footer">
+                            <span>Created {{ team.created_at * 1000 | date: 'mediumDate' }}</span>
+                            <span class="team-updated">
+                                Updated {{ team.updated_at * 1000 | date: 'mediumDate' }}
+                                @if (isAdmin) {
+                                    <button
+                                        pButton
+                                        type="button"
+                                        text
+                                        rounded
+                                        severity="secondary"
+                                        class="edit-team-button"
+                                        [attr.aria-label]="'Edit ' + team.name"
+                                        (click)="onClickEditTeam(team)"
+                                    >
+                                        <svg
+                                            class="edit-team-icon"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            aria-hidden="true"
+                                        >
+                                            <path d="M4 20h4L19.5 8.5a2.12 2.12 0 0 0-3-3L5 17v3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                            <path d="m14.5 7.5 2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                        </svg>
+                                    </button>
+                                }
+                            </span>
+                        </div>
+                    </article>
+                }
+            </div>
+        } @else {
+            <div class="empty-state">No teams available.</div>
+        }
+    </section>
+
+    <dialog
+        class="team-dialog"
+        [open]="isAddingTeam"
+        (cancel)="onCancelAddTeam()">
+        <div class="team-dialog-header">
+            <h2>{{ editingTeam ? 'Edit team' : 'Add team' }}</h2>
+            <button
+                pButton
+                type="button"
+                icon="pi pi-times"
+                text
+                rounded
+                severity="secondary"
+                aria-label="Close add team dialog"
+                [disabled]="isSubmittingTeam"
+                (click)="onCancelAddTeam()"
+            >
+            </button>
+        </div>
+
+        <form #teamForm (submit)="onSubmitTeamForm(teamForm, $event)" class="team-form">
+            <div class="team-form-field">
+                <label for="team-name">Team name</label>
+                <input id="team-name" name="teamName" type="text" required minlength="5" maxlength="25" [value]="editingTeam?.name ?? ''" placeholder="e.g. Engineering">
+            </div>
+
+            <div class="team-form-field">
+                <label for="team-short-name">Short name</label>
+                <input id="team-short-name" name="teamShortName" type="text" required minlength="1" maxlength="3" [value]="editingTeam?.short_name ?? ''" placeholder="e.g. ENG">
+            </div>
+
+            <div class="team-form-field">
+                <label for="team-description">Description</label>
+                <textarea id="team-description" name="teamDescription" required minlength="4" maxlength="100" rows="4" [value]="editingTeam?.description ?? ''" placeholder="Describe this team"></textarea>
+            </div>
+
+            <div class="team-form-actions">
+                <button pButton type="button" severity="secondary" [disabled]="isSubmittingTeam" (click)="onCancelAddTeam()">
+                    Cancel
+                </button>
+                <button pButton type="submit" severity="primary" class="team-primary-button" [loading]="isSubmittingTeam">
+                    {{ editingTeam ? 'Update team' : 'Add team' }}
+                </button>
+            </div>
+        </form>
+    </dialog>
+}
