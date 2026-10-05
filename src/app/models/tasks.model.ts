@@ -7,3 +7,14 @@ export interface TaskCountStats {
     on_hold: number;
     total: number;
 }
+
+export interface TeamTaskCountStats extends TaskCountStats {
+  team_id: string;
+  team_name: string;
+  team_short_name: string;
+  overdue: number;
+}
+
+export interface TeamOverviewRow extends TeamTaskCountStats {
+  completion: number;
+}

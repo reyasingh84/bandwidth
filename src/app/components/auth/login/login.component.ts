@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import {ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators} from '@angular/forms';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../services/auth/auth.service'; 
 import { Router } from '@angular/router';
 import { isValidAuthToken } from '../../../utils/auth-token';
 import { InputPasswordModule } from 'primeng/inputpassword';

@@ -1,8 +1,8 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { TasksService } from '../../services/tasks.service';
+import { TasksService } from '../../services/tasks/tasks.service';
 import { MessageService } from 'primeng/api';
 import { CardModule } from 'primeng/card';
-import { TaskCountStats } from '../../models/tasks.model';
+import { TaskCountStats, TeamOverviewRow, TeamTaskCountStats } from '../../models/tasks.model';
 import { Clock } from '@primeicons/angular/clock';
 import { Clipboard } from '@primeicons/angular/clipboard';
 import { CheckCircle } from '@primeicons/angular/check-circle';
@@ -10,6 +10,9 @@ import { ExclamationTriangle } from '@primeicons/angular/exclamation-triangle';
 import { ChartModule } from 'primeng/chart';
 import { UsersService } from '../../services/users/users.service';
 import { User } from '../../models/user.model';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { Spinner } from '@primeicons/angular/spinner';
+
 import {
   chart_colour_1,
   chart_colour_2,
@@ -20,8 +23,10 @@ import {
   chart_colour_overdue,
 } from '../../constants/chart-colors';
 
+
+
 @Component({
-  imports: [CardModule, Clock, Clipboard, CheckCircle, ExclamationTriangle, ChartModule],
+  imports: [CardModule, Clock, Clipboard, CheckCircle, ExclamationTriangle, ChartModule, ProgressBarModule, Spinner],
   selector: 'bw-dashboard',
   styleUrl: './dashboard.component.css',
   templateUrl: './dashboard.component.html',
@@ -31,6 +36,7 @@ export class DashboardComponent implements OnInit {
   messageService = inject(MessageService);
   usersService = inject(UsersService);
   userInfo: User | null = this.usersService.getUserInfo();
+  isDataLoading =signal(false);
   overdueTaskStats = signal<TaskCountStats>({
     open: 0,
     in_progress: 0,
@@ -49,6 +55,8 @@ export class DashboardComponent implements OnInit {
     on_hold: 0,
     total: 0
   })
+
+  teams = signal<TeamOverviewRow[]>([]);
 
   taskStatusChartData = computed(() => ({
     labels: ['Open', 'In Progress', 'Review', 'Testing', 'Closed', 'On Hold'],
@@ -139,14 +147,17 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchDashboardData()
+    this.fetchTeamDashboardData()
   }
 
   fetchDashboardData(){
+    this.isDataLoading.set(true);
     this.taskService.getDashboardStats().subscribe({
       next: (res)=> {
         const response = res?.response;
         this.allTaskStats.set(response?.task_count);
-        this.overdueTaskStats.set(response?.overdue_task_count)
+        this.overdueTaskStats.set(response?.overdue_task_count);
+        this.isDataLoading.set(false);
       },
       error: (err)=> {
         console.log(err);
@@ -154,9 +165,32 @@ export class DashboardComponent implements OnInit {
           summary: "Failed to Load Data.",
           detail: "Something went wrong.",
           severity: 'error'
-        })
+        });
+        this.isDataLoading.set(false);
       },
       complete: ()=> {console.log("Completed")}
     })
   }
+
+  fetchTeamDashboardData(){
+    this.taskService.getDashboardTeamStats().subscribe({
+      next: (res)=>{
+        const response = Array.isArray(res?.response) ? res.response : [];
+        this.teams.set(response.map((team: TeamTaskCountStats) => ({
+          ...team,
+          completion: team.total > 0 ? Math.round((team.closed / team.total) * 100) : 0,
+        })));
+      },
+      error: (err)=>{
+        console.log(err);
+        this.messageService.add({
+          summary: "Failed to Load Data.",
+          detail: "Something went wrong.",
+          severity: 'error'
+        })
+      },
+      complete: ()=>{ console.log("completed")}
+    })
+  }
+
 }

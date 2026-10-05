@@ -65,6 +65,44 @@ p-sidebar-main {
     font-weight: 700;
 }
 
+.mobile-logo-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border-radius: 0.6rem;
+    background: transparent;
+}
+
+.mobile-brand-mark {
+    display: inline-grid;
+    grid-template-columns: repeat(3, 4px);
+    align-items: end;
+    gap: 2px;
+    width: 1.7rem;
+    height: 1.7rem;
+    padding: 0.35rem;
+    border-radius: 0.5rem;
+    background: #3d5cdb;
+}
+
+.mobile-brand-mark span {
+    display: block;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: #fff;
+}
+
+.mobile-brand-mark span:nth-child(2) {
+    height: 0.72rem;
+}
+
+.mobile-brand-mark span:nth-child(3) {
+    height: 0.94rem;
+}
+
 :host ::ng-deep p-sidebar-main > router-outlet ~ * {
     display: block;
     flex: 1 1 auto;
@@ -116,4 +154,10 @@ p-sidebar-main {
 
 .app-brand-mark span:nth-child(3) {
     height: 1.05rem;
+}
+
+@media (max-width: 1023px) {
+    .mobile-logo-toggle {
+        display: inline-flex;
+    }
 }

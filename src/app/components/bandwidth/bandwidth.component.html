@@ -80,6 +80,23 @@
                 <p-sidebar-main>
                     <header class="top-navbar">
                         <div class="navbar-start">
+                            @if (isMobile()) {
+                                <button
+                                    pButton
+                                    pSidebarTrigger
+                                    target="nav"
+                                    severity="secondary"
+                                    text
+                                    class="mobile-logo-toggle"
+                                    aria-label="Open navigation"
+                                >
+                                    <span class="mobile-brand-mark" aria-hidden="true">
+                                        <span></span>
+                                        <span></span>
+                                        <span></span>
+                                    </span>
+                                </button>
+                            }
                             <span class="page-title">{{ currentPageTitle() }}</span>
                         </div>
                         <div class="navbar-end">

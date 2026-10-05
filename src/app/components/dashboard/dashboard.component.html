@@ -1,69 +1,122 @@
-<section class="dashboard-greeting">
-  <h1>Good morning, {{ userInfo?.first_name || 'there' }} <span aria-hidden="true">👋</span></h1>
-  <p>Here's what's happening across your organization today.</p>
-</section>
+@if (isDataLoading()) {
+    <div class="dashboard-loader" role="status" aria-live="polite">
+        <svg data-p-icon="spinner" [spin]="true" [size]="36"></svg>
+        <span>Loading Please Wait...</span>
+    </div>
+}@else {
+    <section class="dashboard-greeting">
+    <h1>Good morning, {{ userInfo?.first_name || 'there' }} <span aria-hidden="true">👋</span></h1>
+    <p>Here's what's happening across your organization today.</p>
+    </section>
 
-<div class="stats-grid">
-  <p-card class="dashboard-tile">
-    <div class="tile-content">
-      <div class="tile-icon tile-icon-total">
-        <svg data-p-icon="clipboard"></svg>
-      </div>
-      <strong class="tile-value">{{ allTaskStats().total }}</strong>
-      <span class="tile-label">Total Tasks</span>
-    </div>
-  </p-card>
+    <div class="stats-grid">
+    <p-card class="dashboard-tile">
+        <div class="tile-content">
+        <div class="tile-icon tile-icon-total">
+            <svg data-p-icon="clipboard"></svg>
+        </div>
+        <strong class="tile-value">{{ allTaskStats().total }}</strong>
+        <span class="tile-label">Total Tasks</span>
+        </div>
+    </p-card>
 
-  <p-card class="dashboard-tile">
-    <div class="tile-content">
-      <div class="tile-icon tile-icon-progress">
-        <svg data-p-icon="clock"></svg>
-      </div>
-      <strong class="tile-value">{{ allTaskStats().in_progress }}</strong>
-      <span class="tile-label">In Progress</span>
-    </div>
-  </p-card>
+    <p-card class="dashboard-tile">
+        <div class="tile-content">
+        <div class="tile-icon tile-icon-progress">
+            <svg data-p-icon="clock"></svg>
+        </div>
+        <strong class="tile-value">{{ allTaskStats().in_progress }}</strong>
+        <span class="tile-label">In Progress</span>
+        </div>
+    </p-card>
 
-  <p-card class="dashboard-tile">
-    <div class="tile-content">
-      <div class="tile-icon tile-icon-completed">
-        <svg data-p-icon="check-circle"></svg>
-      </div>
-      <strong class="tile-value">{{ allTaskStats().closed }}</strong>
-      <span class="tile-label">Completed</span>
-    </div>
-  </p-card>
+    <p-card class="dashboard-tile">
+        <div class="tile-content">
+        <div class="tile-icon tile-icon-completed">
+            <svg data-p-icon="check-circle"></svg>
+        </div>
+        <strong class="tile-value">{{ allTaskStats().closed }}</strong>
+        <span class="tile-label">Completed</span>
+        </div>
+    </p-card>
 
-  <p-card class="dashboard-tile">
-    <div class="tile-content">
-      <div class="tile-icon tile-icon-overdue">
-        <svg data-p-icon="exclamation-triangle"></svg>
-      </div>
-      <strong class="tile-value">{{ overdueTaskStats().total }}</strong>
-      <span class="tile-label">Overdue</span>
+    <p-card class="dashboard-tile">
+        <div class="tile-content">
+        <div class="tile-icon tile-icon-overdue">
+            <svg data-p-icon="exclamation-triangle"></svg>
+        </div>
+        <strong class="tile-value">{{ overdueTaskStats().total }}</strong>
+        <span class="tile-label">Overdue</span>
+        </div>
+    </p-card>
     </div>
-  </p-card>
-</div>
 
-<div class="charts-grid">
-  <p-card class="chart-card">
-    <div class="chart-heading">
-      <h2>Task Status</h2>
-      <span>All tasks by status</span>
-    </div>
-    <div class="chart-wrapper">
-      <p-chart type="doughnut" [data]="taskStatusChartData()" [options]="chartOptions"></p-chart>
-    </div>
-  </p-card>
+    <div class="charts-grid">
+    <p-card class="chart-card">
+        <div class="chart-heading">
+        <h2>Task Status</h2>
+        <span>All tasks by status</span>
+        </div>
+        <div class="chart-wrapper">
+        @if (allTaskStats().total > 0) {
+            <p-chart type="doughnut" [data]="taskStatusChartData()" [options]="chartOptions"></p-chart>
+        } @else {
+            <div class="chart-empty-state" role="status">No tasks available</div>
+        }
+        </div>
+    </p-card>
 
-  <p-card class="chart-card">
-    <div class="chart-heading">
-      <h2>Overdue Tasks</h2>
-      <span>Overdue tasks by status</span>
+    <p-card class="chart-card">
+        <div class="chart-heading">
+        <h2>Overdue Tasks</h2>
+        <span>Overdue tasks by status</span>
+        </div>
+        <div class="chart-wrapper">
+        @if (overdueTaskStats().total > 0) {
+            <p-chart type="pie" [data]="overdueStatusChartData()" [options]="chartOptions"></p-chart>
+        } @else {
+            <div class="chart-empty-state" role="status">No overdue tasks</div>
+        }
+        </div>
+    </p-card>
     </div>
-    <div class="chart-wrapper">
-      <p-chart type="pie" [data]="overdueStatusChartData()" [options]="chartOptions"></p-chart>
-    </div>
-  </p-card>
-</div>
 
+    @if (userInfo?.role?.toLowerCase() !== 'employee') {
+    <div class="team-overview">
+    <div class="team-overview-header">
+        <h2>{{ userInfo?.role?.toLowerCase() === 'manager' ? 'Team Overview' : 'Teams Overview' }}</h2>
+    </div>
+    <table class="team-table">
+        <tbody>
+        @for (team of teams(); track team.team_name) {
+        <tr>
+            <td>
+            <span class="team-icon" [attr.aria-label]="team.team_name">
+                {{ team.team_short_name }}
+            </span>
+            </td>
+            <td class="team-info">
+            <div class="team-name">
+                <strong>{{ team.team_name }}</strong>
+            </div>
+            <div class="progress-section">
+                <p-progressbar [value]="team.completion" [showValue]="false"></p-progressbar>
+                <span>{{ team.completion }}% complete</span>
+            </div>
+            </td>
+            <td class="statistics">
+            <div><strong>{{ team.total }}</strong><span>Total</span></div>
+            <div class="done"><strong>{{ team.closed }}</strong><span>Done</span></div>
+            <div class="progress"><strong>{{ team.in_progress }}</strong><span>In Progress</span></div>
+            <div class="overdue"><strong>{{ team.overdue }}</strong><span>Overdue</span></div>
+            </td>
+        </tr>
+        } @empty {
+            <tr><td colspan="3" class="team-empty">No team data available.</td></tr>
+        }
+        </tbody>
+    </table>
+    </div>
+    }
+
+} 

@@ -9,6 +9,23 @@
     min-height: 100%;
 }
 
+.dashboard-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    gap: 0.85rem;
+    color: #3964d8;
+    text-align: center;
+}
+
+.dashboard-loader span {
+    color: #71809d;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
 .dashboard-greeting,
 .stats-grid,
 .charts-grid {
@@ -156,6 +173,16 @@
     height: 18rem;
 }
 
+.chart-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #71809d;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
 :host ::ng-deep .chart-wrapper p-chart {
     display: block;
     width: 100%;
@@ -182,5 +209,267 @@
     .charts-grid {
         grid-template-columns: 1fr;
         padding: 0 1rem 1rem;
+    }
+}
+
+.team-overview {
+    margin: 0 1.25rem 1.25rem;
+    padding: 1.25rem 1.35rem 0;
+    border: 1px solid #e1e6ef;
+    border-radius: 0.65rem;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(23, 33, 58, 0.03);
+}
+
+.team-overview-header h2 {
+    margin: 0 0 1.25rem;
+    color: #17213a;
+    font-size: 1.05rem;
+}
+
+table.team-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.team-table tbody > tr > td {
+    padding: 1rem 0.75rem;
+    border-bottom: 1px solid #edf0f5;
+    color: #17213a;
+    vertical-align: middle;
+}
+
+table.team-table tbody > tr:last-child > td {
+    border-bottom: 0;
+}
+
+.team-info {
+    width: 55%;
+}
+
+.team-name,
+.progress-section,
+.statistics {
+    display: flex;
+    align-items: center;
+}
+
+.team-name {
+    gap: 0.45rem;
+    color: #71809d;
+    font-size: 0.78rem;
+}
+
+.team-name strong {
+    color: #17213a;
+    font-size: 0.9rem;
+}
+
+.progress-section {
+    gap: 0.6rem;
+    margin-top: 0.6rem;
+    color: #71809d;
+    font-size: 0.72rem;
+}
+
+:host ::ng-deep .progress-section .p-progressbar {
+    width: 10.5rem;
+    height: 0.35rem;
+    border-radius: 999px;
+    background: #edf0f4;
+}
+
+:host ::ng-deep .progress-section .p-progressbar-value {
+    border-radius: inherit;
+    background: #3964d8;
+}
+
+.statistics {
+    justify-content: flex-end;
+    gap: 1.75rem;
+    text-align: right;
+}
+
+.statistics div {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 3.5rem;
+}
+
+.statistics strong {
+    font-size: 0.95rem;
+}
+
+.statistics span {
+    color: #9aa5b7;
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+.statistics .done strong {
+    color: #24946d;
+}
+
+.statistics .progress strong {
+    color: #3964d8;
+}
+
+.statistics .overdue strong {
+    color: #e45050;
+}
+
+.team-empty {
+    padding: 1.25rem !important;
+    color: #71809d !important;
+    text-align: center;
+}
+
+table.team-table th {
+    padding: 0.65rem 0.75rem;
+    border: 0;
+    border-bottom: 1px solid #edf0f5;
+    color: #9aa5b7;
+    background: #fff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-align: right;
+    text-transform: uppercase;
+}
+
+table.team-table th:first-child {
+    text-align: left;
+}
+
+table.team-table td {
+    padding: 0.75rem;
+    border: 0;
+    border-bottom: 1px solid #edf0f5;
+    color: #17213a;
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+table.team-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+table.team-table td:first-child {
+    text-align: left;
+}
+
+.team-row {
+    display: grid;
+    grid-template-columns: minmax(20rem, 1fr) 4rem 4rem 5.5rem 4.5rem;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 4.55rem;
+    border-top: 1px solid #edf0f5;
+    color: #17213a;
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+.team-row-header {
+    min-height: 2rem;
+    border-top: 0;
+    color: #9aa5b7;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.team-row-header span:first-child,
+.team-details {
+    text-align: left;
+}
+
+.team-details {
+    display: grid;
+    grid-template-columns: 2.2rem 1fr;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.team-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 0.45rem;
+   color: #3964d8;
+   background: #edf2ff;
+   font-size: 0.78rem;
+   font-weight: 700;
+   text-transform: uppercase;
+}
+
+.team-icon svg {
+   width: 1rem;
+   height: 1rem;
+}
+
+.team-details strong {
+    display: inline-block;
+    margin-right: 0.5rem;
+    color: #17213a;
+    font-size: 0.9rem;
+}
+
+.team-details div > span {
+    color: #71809d;
+    font-size: 0.78rem;
+}
+
+.team-progress {
+    display: inline-block;
+    width: 10.5rem;
+    height: 0.35rem;
+    margin: 0.6rem 0.55rem 0 0;
+    overflow: hidden;
+    border-radius: 999px;
+    vertical-align: middle;
+    background: #edf0f4;
+}
+
+.team-progress-bar {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #3964d8;
+}
+
+.team-details small {
+    color: #71809d;
+    font-size: 0.72rem;
+}
+
+.team-stat-done {
+    color: #24946d;
+}
+
+.team-stat-progress {
+    color: #3964d8;
+}
+
+.team-stat-overdue {
+    color: #e45050;
+}
+
+.team-empty {
+    color: #71809d !important;
+    text-align: center !important;
+}
+
+@media (max-width: 760px) {
+    .team-overview {
+        margin-right: 1rem;
+        margin-left: 1rem;
+        overflow-x: auto;
+    }
+
+    table.team-table {
+        min-width: 42rem;
     }
 }

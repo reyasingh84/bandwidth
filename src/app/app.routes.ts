@@ -5,6 +5,7 @@ import { authGuard } from './guards/auth-guard';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { TeamsComponent } from './components/teams/teams.component';
 import { roleGuard } from './guards/role-guard';
+import { TasksComponent } from './components/tasks/tasks.component';
 
 export const routes: Routes = [
   {
@@ -19,6 +20,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent, canActivate: [roleGuard(['admin', 'director', 'manager', 'employee'])] },
       { path: 'teams', component: TeamsComponent , canActivate: [roleGuard(['admin', 'director'])]},
+      { path: 'all-tasks', component:TasksComponent},
       { path: '**', redirectTo: 'dashboard' },
     ],
   },

@@ -1,8 +1,13 @@
-import { Service } from '@angular/core';
+import { inject, Service } from '@angular/core';
 import { User } from '../../models/user.model';
+import { HttpClient } from '@angular/common/http';
+import { BASE_URL } from '../../constants/api.constants';
 
 @Service()
 export class UsersService {
+
+    http = inject(HttpClient);
+
     getUserInfo(): User | null {
         const storedUser = localStorage.getItem('userDetails');
 
@@ -15,5 +20,11 @@ export class UsersService {
         } catch {
             return null;
         }
+    }
+
+
+    getUsersByTeamId(teamId: string){
+        const url = `${BASE_URL}/admin/users`
+        return this.http.get(url)
     }
 }

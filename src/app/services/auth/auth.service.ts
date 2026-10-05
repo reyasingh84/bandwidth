@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
-import { BASE_URL } from '../constants/api.constants';
+import { BASE_URL } from '../../constants/api.constants'; 
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 

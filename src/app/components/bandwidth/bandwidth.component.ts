@@ -23,7 +23,7 @@ import { Clipboard } from '@primeicons/angular/clipboard';
 import { CardModule } from 'primeng/card';
 import { PIcon } from '@primeicons/angular/p-icon';
 import { SIDEBAR_NAVIGATION } from '../../constants/sidebar-navigation';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth/auth.service'; 
 import { MessageService } from 'primeng/api';
 import { User as UserModel } from '../../models/user.model';
 import { UsersService } from '../../services/users/users.service';
