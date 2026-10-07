@@ -170,6 +170,8 @@ export class TaskPreviewComponent {
     this.editingField.set(field);
     this.draftValue.set(field === 'deadline'
       ? new Date(Number(value) * 1000).toISOString().slice(0, 10)
+      : field === 'priority'
+        ? String(Number(value))
       : String(value ?? ''));
   }
 
@@ -315,6 +317,10 @@ export class TaskPreviewComponent {
 
   priorityLabel(priority: number): string {
     return ['Very Low', 'Low', 'Medium', 'High', 'Very High'][Math.max(0, Math.min(priority, 5) - 1)] ?? 'Very Low';
+  }
+
+  isPrioritySelected(option: number): boolean {
+    return option === Number(this.draftValue());
   }
 
   close(): void {

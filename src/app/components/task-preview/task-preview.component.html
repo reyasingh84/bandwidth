@@ -204,7 +204,7 @@
                                     <div class="task-preview-inline-editor">
                                         <select [value]="draftValue()" aria-label="Update task priority" (change)="updateDraft($event)">
                                             @for (option of priorityOptions; track option) {
-                                                <option [value]="option">{{ priorityLabel(option) }}</option>
+                                                <option [value]="option" [selected]="isPrioritySelected(option)">{{ priorityLabel(option) }}</option>
                                             }
                                         </select>
                                         <button type="button" (click)="updateField('priority')">Save</button>
