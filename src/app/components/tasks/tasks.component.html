@@ -1,1 +1,196 @@
-<p>tasks.components works!</p>
+@if (isLoadingData()) {
+    <div class="tasks-loader" role="status" aria-live="polite">
+        <svg data-p-icon="spinner" [spin]="true" [size]="36"></svg>
+        <span>Loading Please Wait...</span>
+    </div>
+}@else{
+    <section class="tasks-page">
+        <header class="tasks-header">
+            <div>
+                <h1>All Tasks</h1>
+                <p>{{ filteredTasks().length }} tasks across all teams</p>
+            </div>
+            @if (isAdmin) {
+                <button
+                    pButton
+                    type="button"
+                    severity="primary"
+                    class="add-task-button"
+                    (click)="onClickAddTask()"
+                >
+                    + Add task
+                </button>
+            }
+        </header>
+
+        <div class="task-filters">
+            <div class="task-search">
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <input
+                    type="search"
+                    placeholder="Search tasks..."
+                    aria-label="Search tasks"
+                    [value]="searchTerm()"
+                    (input)="searchTerm.set($any($event.target).value)"
+                >
+            </div>
+            <p-splitbutton
+                [label]="teamFilterLabel"
+                [model]="teamFilterItems"
+                severity="secondary"
+            />
+            <p-splitbutton
+                [label]="statusFilterLabel"
+                [model]="statusFilterItems"
+                severity="secondary"
+            />
+            <p-splitbutton
+                [label]="priorityFilterLabel"
+                [model]="priorityFilterItems"
+                severity="secondary"
+            />
+        </div>
+
+        @if (isAddingTask) {
+            <div class="task-dialog-backdrop" aria-hidden="true"></div>
+        }
+        <dialog class="task-dialog" [open]="isAddingTask" (cancel)="onCancelAddTask()">
+            <div class="task-dialog-header">
+                <h2>Add task</h2>
+                <button
+                    pButton
+                    type="button"
+                    icon="pi pi-times"
+                    text
+                    rounded
+                    severity="secondary"
+                    aria-label="Close add task dialog"
+                    [disabled]="isSubmittingTask"
+                    (click)="onCancelAddTask()"
+                ></button>
+            </div>
+
+            <form class="task-form" [formGroup]="addTaskForm" (ngSubmit)="onSubmitTaskForm()">
+                <div class="task-form-field">
+                    <label for="task-team">Team</label>
+                    <select id="task-team" formControlName="team_id">
+                        <option value="">Select a team</option>
+                        @for (team of teamNames() | keyvalue; track team.key) {
+                            <option [value]="team.key">{{ team.value }}</option>
+                        }
+                    </select>
+                </div>
+                <div class="task-form-field">
+                    <label for="task-title">Title</label>
+                    <input id="task-title" type="text" formControlName="title" placeholder="e.g. Prepare project brief">
+                </div>
+                <div class="task-form-field">
+                    <label for="task-description">Description</label>
+                    <textarea id="task-description" rows="3" formControlName="description" placeholder="Describe the task"></textarea>
+                </div>
+                <div class="task-form-grid">
+                    <div class="task-form-field">
+                        <label for="task-category">Category</label>
+                        <select id="task-category" formControlName="category">
+                            <option value="">Select a category</option>
+                            <option value="task">Task</option>
+                            <option value="testing">Testing</option>
+                            <option value="bug">Bug</option>
+                        </select>
+                    </div>
+                    <div class="task-form-field">
+                        <label for="task-project">Project Name</label>
+                        <input id="task-project" type="text" formControlName="proj_name" placeholder="e.g. Project Name">
+                    </div>
+                    <div class="task-form-field">
+                        <label for="task-priority">Priority</label>
+                        <select id="task-priority" formControlName="priority">
+                            <option [ngValue]="1">Low</option>
+                            <option [ngValue]="3">Medium</option>
+                            <option [ngValue]="4">High</option>
+                            <option [ngValue]="5">Critical</option>
+                        </select>
+                    </div>
+                    <div class="task-form-field">
+                        <label for="task-deadline">Deadline</label>
+                        <input id="task-deadline" type="date" formControlName="deadline">
+                    </div>
+                    <div class="task-form-field">
+                        <label for="task-assignee-id">Assignee ID</label>
+                        <input id="task-assignee-id" type="text" formControlName="assignee_id" placeholder="Optional">
+                    </div>
+                    <div class="task-form-field">
+                        <label for="task-assignee-username">Assignee username</label>
+                        <input id="task-assignee-username" type="text" formControlName="assignee_username" placeholder="Optional">
+                    </div>
+                </div>
+                <div class="task-form-actions">
+                    <button pButton type="button" severity="secondary" [disabled]="isSubmittingTask" (click)="onCancelAddTask()">
+                        Cancel
+                    </button>
+                    <button pButton type="submit" severity="primary" class="task-submit-button" [loading]="isSubmittingTask">
+                        Add task
+                    </button>
+                </div>
+            </form>
+        </dialog>
+        
+
+        @if (filteredTasks().length) {
+            <div class="tasks-table-wrapper">
+                <table class="tasks-table">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Team</th>
+                            <th>Assignee</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Due Date</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (task of filteredTasks(); track task.id) {
+                            <tr>
+                                <td class="task-title-cell">
+                                    <span class="task-id">{{ task.id }}</span>
+                                    <strong>{{ task.title }}</strong>
+                                </td>
+                                <td>
+                                    <span class="team-reference">{{ getTeamName(task) }}</span>
+                                </td>
+                                <td>
+                                    <span class="assignee">
+                                        <span class="assignee-avatar">
+                                            {{ getAssigneeInitials(task) }}
+                                        </span>
+                                        {{ task.assignee_username || 'Unassigned' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="priority-badge" [class]="'priority-' + priorityLabel(task.priority).toLowerCase()">
+                                        {{ priorityLabel(task.priority) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="status-badge" [class]="'status-' + task.status.toLowerCase()">
+                                        {{ formatStatus(task.status) }}
+                                    </span>
+                                </td>
+                                <td [class.overdue]="task.deadline < currentTime">
+                                    {{ task.deadline * 1000 | date: 'mediumDate' }}
+                                </td>
+                                <td class="updated-date">
+                                    {{ task.updated_at * 1000 | date: 'mediumDate' }}
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        } @else {
+            <div class="empty-state">No tasks available.</div>
+        }
+    </section>
+}

@@ -1,0 +1,465 @@
+.tasks-page {
+    min-height: 100%;
+    padding: 2rem;
+    background: #f8f9fc;
+}
+
+.tasks-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 75rem;
+    margin: 0 auto 1.75rem;
+}
+
+.add-task-button {
+    flex: 0 0 auto;
+}
+
+:host ::ng-deep .add-task-button.p-button {
+    border-color: #3964d8;
+    background: #3964d8;
+    color: #fff;
+}
+
+:host ::ng-deep .add-task-button.p-button:hover {
+    border-color: #304bc0;
+    background: #304bc0;
+}
+
+.tasks-header h1 {
+    margin: 0;
+    color: #1d2942;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.tasks-header p {
+    margin: 0.35rem 0 0;
+    color: #71809d;
+    font-size: 1rem;
+}
+
+.task-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    max-width: 75rem;
+    margin: 0 auto 1rem;
+}
+
+.task-search {
+    position: relative;
+    flex: 1 1 auto;
+}
+
+.task-search input {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 2.9rem;
+    padding: 0.7rem 1rem 0.7rem 2.5rem;
+    border: 1px solid #dfe4ed;
+    border-radius: 0.55rem;
+    color: #1d2942;
+    background: #fff;
+    font: inherit;
+}
+
+.task-search input:focus {
+    outline: 2px solid rgb(57 100 216 / 20%);
+    border-color: #3964d8;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 0.9rem;
+    transform: translateY(-50%);
+    color: #8b97ad;
+    font-size: 1.3rem;
+    pointer-events: none;
+}
+
+:host ::ng-deep .task-filters .p-splitbutton {
+    flex: 0 0 auto;
+}
+
+:host ::ng-deep .task-filters .p-splitbutton .p-button {
+    min-height: 2.9rem;
+    border-color: #dfe4ed;
+    background: #fff;
+    color: #4e5d78;
+}
+
+:host ::ng-deep .task-filters .p-splitbutton .p-button:hover {
+    border-color: #3964d8;
+    color: #3964d8;
+}
+
+.tasks-table-wrapper {
+    max-width: 75rem;
+    margin: 0 auto;
+    overflow: hidden;
+    border: 1px solid #dfe4ed;
+    border-radius: 0.7rem;
+    background: #fff;
+}
+
+.tasks-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    color: #4e5d78;
+    font-size: 0.82rem;
+}
+
+.tasks-table th:nth-child(1),
+.tasks-table td:nth-child(1) {
+    width: 32%;
+}
+
+.tasks-table th:nth-child(2),
+.tasks-table td:nth-child(2) {
+    width: 12%;
+}
+
+.tasks-table th:nth-child(3),
+.tasks-table td:nth-child(3) {
+    width: 17%;
+}
+
+.tasks-table th:nth-child(4),
+.tasks-table td:nth-child(4),
+.tasks-table th:nth-child(5),
+.tasks-table td:nth-child(5) {
+    width: 10%;
+}
+
+.tasks-table th:nth-child(6),
+.tasks-table td:nth-child(6),
+.tasks-table th:nth-child(7),
+.tasks-table td:nth-child(7) {
+    width: 9.5%;
+}
+
+.tasks-table th {
+    padding: 0.8rem 0.65rem;
+    border-bottom: 1px solid #dfe4ed;
+    background: #f8f9fc;
+    color: #71809d;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.tasks-table td {
+    padding: 0.85rem 0.65rem;
+    border-bottom: 1px solid #edf0f5;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+.tasks-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.tasks-table tbody tr:hover {
+    background: #fbfcff;
+}
+
+.task-title-cell {
+    width: 32%;
+    overflow: hidden;
+}
+
+.task-title-cell strong,
+.task-id {
+    display: block;
+}
+
+.task-title-cell strong {
+    overflow: hidden;
+    margin-top: 0.25rem;
+    color: #1d2942;
+    font-size: 0.9rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.task-id {
+    color: #9aa7bc;
+    font-size: 0.68rem;
+    overflow-wrap: anywhere;
+}
+
+.team-reference {
+    display: inline-block;
+    max-width: 100%;
+}
+
+.assignee {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.assignee-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.65rem;
+    height: 1.65rem;
+    border-radius: 50%;
+    background: #3964d8;
+    color: #fff;
+    font-size: 0.62rem;
+    font-weight: 700;
+}
+
+.priority-badge,
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.55rem;
+    border-radius: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.priority-critical {
+    background: #fff0f0;
+    color: #d94a4a;
+}
+
+.priority-high {
+    background: #fff6df;
+    color: #b7791f;
+}
+
+.priority-medium {
+    background: #edf3ff;
+    color: #3964d8;
+}
+
+.priority-low {
+    background: #edf8f2;
+    color: #25845e;
+}
+
+.status-open,
+.status-testing {
+    background: #edf3ff;
+    color: #3964d8;
+}
+
+.status-in_progress,
+.status-review {
+    background: #fff6df;
+    color: #b7791f;
+}
+
+.status-closed {
+    background: #edf8f2;
+    color: #25845e;
+}
+
+.status-on_hold {
+    background: #f1f3f7;
+    color: #71809d;
+}
+
+.overdue {
+    color: #d94a4a;
+    font-weight: 600;
+}
+
+.updated-date {
+    color: #8b97ad;
+}
+
+.empty-state {
+    max-width: 75rem;
+    margin: 0 auto;
+    padding: 3rem;
+    border: 1px dashed #cbd3e0;
+    border-radius: 0.7rem;
+    color: #71809d;
+    text-align: center;
+}
+
+.task-dialog {
+    position: fixed;
+    inset: 1rem;
+    z-index: 1000;
+    width: min(42rem, calc(100% - 2rem));
+    max-width: calc(100% - 2rem);
+    height: fit-content;
+    max-height: calc(100vh - 2rem);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: 0.7rem;
+    color: #4e5d78;
+    background: #fff;
+    box-shadow: 0 1rem 3rem rgb(29 41 66 / 20%);
+    overflow-y: auto;
+}
+
+.task-dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgb(15 23 42 / 55%);
+}
+
+.task-dialog::backdrop {
+    background: rgb(29 41 66 / 45%);
+}
+
+.task-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.task-dialog-header h2 {
+    margin: 0;
+    color: #1d2942;
+    font-size: 1.25rem;
+}
+
+.task-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+}
+
+.task-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.task-form-field label {
+    color: #4e5d78;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.task-form-field input,
+.task-form-field select,
+.task-form-field textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid #dfe4ed;
+    border-radius: 0.45rem;
+    color: #1d2942;
+    background: #fff;
+    font: inherit;
+}
+
+.task-form-field textarea {
+    resize: vertical;
+}
+
+.task-form-field input:focus,
+.task-form-field select:focus,
+.task-form-field textarea:focus {
+    outline: 2px solid rgb(57 100 216 / 20%);
+    border-color: #3964d8;
+}
+
+.task-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.task-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+}
+
+:host ::ng-deep .task-submit-button.p-button {
+    border-color: #3964d8;
+    background: #3964d8;
+    color: #fff;
+}
+
+:host ::ng-deep .task-submit-button.p-button:hover {
+    border-color: #304bc0;
+    background: #304bc0;
+}
+
+.tasks-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    gap: 0.85rem;
+    color: #3964d8;
+    text-align: center;
+}
+
+.tasks-loader span {
+    color: #71809d;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+@media (max-width: 900px) {
+    .tasks-page {
+        padding: 1.25rem;
+    }
+
+    .tasks-table {
+        font-size: 0.75rem;
+    }
+
+    .tasks-table th,
+    .tasks-table td {
+        padding: 0.65rem 0.4rem;
+    }
+
+    .assignee {
+        gap: 0.3rem;
+    }
+
+    .assignee-avatar {
+        flex: 0 0 1.45rem;
+        width: 1.45rem;
+        height: 1.45rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .tasks-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .task-filters {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    :host ::ng-deep .task-filters .p-splitbutton {
+        width: 100%;
+    }
+
+    .task-form-grid {
+        grid-template-columns: 1fr;
+    }
+}

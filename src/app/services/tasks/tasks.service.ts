@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { BASE_URL } from '../../constants/api.constants';
 import { Observable } from 'rxjs';
+import { TasksResponse, TasksResponseForm } from '../../models/tasks.model';
 
 @Service()
 export class TasksService {
@@ -15,5 +16,15 @@ export class TasksService {
     getDashboardTeamStats(): Observable<any>{
         const url = `${BASE_URL}/tasks/statistics/team`
         return this.http.get(url)
+    }
+
+    getAllTasks(): Observable<TasksResponse>{
+        const url = `${BASE_URL}/tasks/all`
+        return this.http.get<TasksResponse>(url)
+    }
+
+    addTask(task: TasksResponseForm): Observable<TasksResponse> {
+        const url = `${BASE_URL}/tasks/create`;
+        return this.http.post<TasksResponse>(url, task);
     }
 }

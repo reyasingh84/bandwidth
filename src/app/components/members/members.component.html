@@ -1,0 +1,70 @@
+@if (isLoadingData()) {
+    <div class="members-loader" role="status" aria-live="polite">
+        <svg data-p-icon="spinner" [spin]="true" [size]="36"></svg>
+        <span>Loading Please Wait...</span>
+    </div>
+} @else {
+    <section class="members-page">
+        <header class="members-header">
+            <div>
+                <h1>Members</h1>
+                <p>{{ filteredUsers().length }} people in the organization</p>
+            </div>
+        </header>
+
+        <div class="members-toolbar">
+            <span class="members-search-icon" aria-hidden="true">⌕</span>
+            <input
+                type="search"
+                aria-label="Search members"
+                placeholder="Search members..."
+                [value]="searchTerm()"
+                (input)="searchTerm.set($any($event.target).value)"
+            >
+        </div>
+
+        @if (filteredUsers().length) {
+            <p-table
+                [value]="filteredUsers()"
+                [tableStyle]="{ 'min-width': '52rem' }"
+                styleClass="members-table"
+            >
+                <ng-template #header>
+                    <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Team</th>
+                        <th>Email</th>
+                    </tr>
+                </ng-template>
+                <ng-template #body let-user>
+                    <tr>
+                        <td>
+                            <div class="member-name">
+                                <p-avatar
+                                    [label]="getInitials(user)"
+                                    shape="circle"
+                                    styleClass="member-avatar"
+                                />
+                                <div>
+                                    <strong>{{ getFullName(user) }}</strong>
+                                    <span>{{ user.username }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <p-tag
+                                [value]="formatRole(user.role)"
+                                [severity]="getRoleSeverity(user.role)"
+                            />
+                        </td>
+                        <td>{{ getTeamName(user) }}</td>
+                        <td class="member-email">{{ user.email }}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        } @else {
+            <div class="members-empty-state">No members found.</div>
+        }
+    </section>
+}
