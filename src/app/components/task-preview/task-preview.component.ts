@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { MessageService } from 'primeng/api';
 import { SidebarModule } from 'primeng/sidebar';
 import { ButtonModule } from 'primeng/button';
 import { TimelineModule } from 'primeng/timeline';
@@ -22,6 +23,7 @@ export class TaskPreviewComponent {
   private readonly teamsService = inject(TeamsService);
   private readonly tasksService = inject(TasksService);
   private readonly usersService = inject(UsersService);
+  private readonly messageService = inject(MessageService);
   task = input.required<TaskInfo>();
   closed = output<void>();
   open = true;
@@ -40,7 +42,6 @@ export class TaskPreviewComponent {
   readonly activeHistoryView = signal<'comments' | 'activity'>('comments');
   private statusBeforeEdit = '';
   readonly statusOptions = ['open', 'in_progress', 'review', 'testing', 'on_hold', 'closed'];
-  readonly categoryOptions = ['bug', 'testing', 'task'];
   readonly priorityOptions = [1, 2, 3, 4, 5];
 
   readonly mockComments = [
@@ -139,6 +140,10 @@ export class TaskPreviewComponent {
   }
 
   canEditField(field: keyof TaskInfo): boolean {
+    if (field === 'category') {
+      return false;
+    }
+
     const user = this.usersService.getUserInfo();
     const role = user?.role?.trim().toLowerCase();
 
@@ -212,9 +217,19 @@ export class TaskPreviewComponent {
         }
         this.editingField.set(null);
         this.savingField.set(null);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Task updated',
+          detail: `${this.formatStatus(String(field))} was updated successfully.`,
+        });
       },
       error: (error) => {
         this.savingField.set(null);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Task update failed',
+          detail: this.getUpdateErrorMessage(error),
+        });
       },
     });
   }
@@ -246,9 +261,21 @@ export class TaskPreviewComponent {
         }));
         this.editingField.set(null);
         this.savingField.set(null);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Assignee updated',
+          detail: member
+            ? `Task assigned to ${this.getAssigneeDisplayName(member)}.`
+            : 'Task is now unassigned.',
+        });
       },
       error: (error) => {
         this.savingField.set(null);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Assignee update failed',
+          detail: this.getUpdateErrorMessage(error),
+        });
       },
     });
   }
@@ -306,13 +333,33 @@ export class TaskPreviewComponent {
       next: () => {
         this.statusEditing.set(false);
         this.statusSaving.set(false);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Status updated',
+          detail: `Task status changed to ${this.formatStatus(nextStatus)}.`,
+        });
       },
       error: (error) => {
         this.status.set(previousStatus);
         this.statusEditing.set(false);
         this.statusSaving.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Status update failed',
+          detail: this.getUpdateErrorMessage(error),
+        });
       },
     });
+  }
+
+  private getUpdateErrorMessage(error: { error?: { detail?: string | Array<{ msg?: string }> } }): string {
+    const detail = error?.error?.detail;
+
+    if (Array.isArray(detail)) {
+      return detail.map((item) => item.msg ?? 'Invalid task data').join('. ');
+    }
+
+    return detail || 'The task could not be updated. Please try again.';
   }
 
   priorityLabel(priority: number): string {

@@ -222,27 +222,10 @@
                                 }
                             </div>
                             <div>
-                                <h3>Category</h3>
-                                @if (editingField() === 'category') {
-                                    <div class="task-preview-inline-editor">
-                                        <select [value]="draftValue()" aria-label="Update task category" (change)="updateDraft($event)">
-                                            @for (option of categoryOptions; track option) {
-                                                <option [value]="option">{{ formatStatus(option) }}</option>
-                                            }
-                                        </select>
-                                        <button type="button" (click)="updateField('category')">Save</button>
-                                        <button type="button" (click)="cancelFieldEditing()">Cancel</button>
-                                    </div>
-                                } @else {
-                                    <div class="task-preview-editable-value">
-                                        <span>{{ formatStatus(taskValue('category')) }}</span>
-                                        @if (canEditField('category')) {
-                                            <button type="button" class="task-preview-edit-button" aria-label="Edit task category" (click)="startFieldEditing('category')">
-                                                <svg data-p-icon="pencil"></svg>
-                                            </button>
-                                        }
-                                    </div>
-                                }
+                                <h3>Type</h3>
+                                <div class="task-preview-editable-value">
+                                    <span>{{ formatStatus(taskValue('category')) }}</span>
+                                </div>
                             </div>
                             <div>
                                 <h3>Assignee</h3>
