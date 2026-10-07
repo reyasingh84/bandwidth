@@ -73,7 +73,7 @@
             <form class="task-form" [formGroup]="addTaskForm" (ngSubmit)="onSubmitTaskForm()">
                 <div class="task-form-field">
                     <label for="task-team">Team</label>
-                    <select id="task-team" formControlName="team_id">
+                    <select id="task-team" formControlName="team_id" (change)="onCreateTaskTeamChange($event)">
                         <option value="">Select a team</option>
                         @for (team of teamNames() | keyvalue; track team.key) {
                             <option [value]="team.key">{{ team.value }}</option>
@@ -116,12 +116,20 @@
                         <input id="task-deadline" type="date" formControlName="deadline">
                     </div>
                     <div class="task-form-field">
-                        <label for="task-assignee-id">Assignee ID</label>
-                        <input id="task-assignee-id" type="text" formControlName="assignee_id" placeholder="Optional">
-                    </div>
-                    <div class="task-form-field">
-                        <label for="task-assignee-username">Assignee username</label>
-                        <input id="task-assignee-username" type="text" formControlName="assignee_username" placeholder="Optional">
+                        <label for="task-assignee">Assignee</label>
+                        <select
+                            id="task-assignee"
+                            formControlName="assignee_id"
+                            [disabled]="!addTaskForm.get('team_id')?.value || isLoadingTeamMembers()"
+                            (change)="onCreateTaskAssigneeChange($event)"
+                        >
+                            <option value="">
+                                {{ isLoadingTeamMembers() ? 'Loading members...' : 'Unassigned' }}
+                            </option>
+                            @for (member of teamMembers(); track member.id) {
+                                <option [value]="member.id">{{ getMemberName(member) }}</option>
+                            }
+                        </select>
                     </div>
                 </div>
                 <div class="task-form-actions">

@@ -103,7 +103,9 @@
 .tasks-table-wrapper {
     max-width: 75rem;
     margin: 0 auto;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
     border: 1px solid #dfe4ed;
     border-radius: 0.7rem;
     background: #fff;
@@ -111,6 +113,7 @@
 
 .tasks-table {
     width: 100%;
+    min-width: 52rem;
     table-layout: fixed;
     border-collapse: collapse;
     color: #4e5d78;
@@ -441,6 +444,10 @@
         padding: 0.65rem 0.4rem;
     }
 
+    .tasks-table-wrapper {
+        border-radius: 0.55rem;
+    }
+
     .assignee {
         gap: 0.3rem;
     }
@@ -453,6 +460,14 @@
 }
 
 @media (max-width: 700px) {
+    .tasks-page {
+        padding: 1rem 0.75rem;
+    }
+
+    .tasks-table {
+        min-width: 48rem;
+    }
+
     .tasks-header {
         align-items: stretch;
         flex-direction: column;

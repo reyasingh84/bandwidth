@@ -4,6 +4,7 @@ import { UsersService } from '../../services/users/users.service';
 import { TasksService } from '../../services/tasks/tasks.service';
 import { MenuItem, MessageService } from 'primeng/api';
 import { TaskInfo, TasksResponseForm } from '../../models/tasks.model';
+import { User } from '../../models/user.model';
 import { Spinner } from '@primeicons/angular/spinner';
 import { DatePipe, KeyValuePipe } from '@angular/common';
 import { TeamsService } from '../../services/teams/teams.service';
@@ -36,6 +37,8 @@ export class TasksComponent implements OnInit{
   isAddingTask = false;
   isSubmittingTask = false;
   selectedTask = signal<TaskInfo | null>(null);
+  teamMembers = signal<User[]>([]);
+  isLoadingTeamMembers = signal(false);
 
   get isAdmin(): boolean {
     return this.userService.getUserInfo()?.role?.trim().toLowerCase() === 'admin';
@@ -159,7 +162,52 @@ export class TasksComponent implements OnInit{
       assignee_username: '',
       deadline: '',
     });
+    this.loadTeamMembers(this.addTaskForm.get('team_id')?.value);
     this.isAddingTask = true;
+  }
+
+  onCreateTaskTeamChange(event: Event): void {
+    const teamId = (event.target as HTMLSelectElement).value;
+    this.addTaskForm.patchValue({
+      assignee_id: '',
+      assignee_username: '',
+    });
+    this.loadTeamMembers(teamId);
+  }
+
+  getMemberName(member: User): string {
+    return member.username || `${member.first_name} ${member.last_name}`.trim();
+  }
+
+  private loadTeamMembers(teamId: string): void {
+    this.teamMembers.set([]);
+
+    if (!teamId) {
+      return;
+    }
+
+    this.isLoadingTeamMembers.set(true);
+    this.teamsService.getTeamMembers(teamId).subscribe({
+      next: (members) => {
+        console.log('Create task team members', members);
+        this.teamMembers.set(members);
+        this.isLoadingTeamMembers.set(false);
+      },
+      error: (error) => {
+        console.error('Unable to load create task team members', error);
+        this.isLoadingTeamMembers.set(false);
+      },
+    });
+  }
+
+  onCreateTaskAssigneeChange(event: Event): void {
+    const assigneeId = (event.target as HTMLSelectElement).value;
+    const member = this.teamMembers().find((candidate) => candidate.id === assigneeId);
+
+    this.addTaskForm.patchValue({
+      assignee_id: assigneeId,
+      assignee_username: member ? this.getMemberName(member) : '',
+    });
   }
 
   onSubmitTaskForm(): void {

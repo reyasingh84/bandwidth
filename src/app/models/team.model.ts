@@ -1,3 +1,5 @@
+import { User } from './user.model';
+
 export interface TeamInfo {
   id: string;
   name: string;
@@ -5,6 +7,8 @@ export interface TeamInfo {
   description: string;
   created_at: number;
   updated_at: number;
+  members?: User[];
+  users?: User[];
 }
 
 export interface TeamsResponse {

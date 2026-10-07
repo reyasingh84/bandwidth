@@ -1,6 +1,6 @@
 @if (open) {
     <div class="task-preview-overlay" (click)="close()" aria-hidden="true"></div>
-    <aside class="task-preview-drawer" aria-label="Task preview">
+    <aside class="task-preview-drawer" aria-label="Task preview" (click)="handlePreviewClick($event)">
                 <header class="task-preview-sidebar-header">
                     <div class="task-preview-header">
                         <div class="task-preview-heading">
@@ -9,7 +9,27 @@
                                 <span class="task-preview-status">{{ formatStatus(task().status) }}</span>
                                 <span class="task-preview-priority">{{ priorityLabel(task().priority) }}</span>
                             </div>
-                            <h2>{{ task().title }}</h2>
+                            @if (editingField() === 'title') {
+                                <div class="task-preview-inline-editor task-preview-title-editor">
+                                    <input
+                                        type="text"
+                                        [value]="draftValue()"
+                                        aria-label="Update task title"
+                                        (input)="updateDraft($event)"
+                                    />
+                                    <button type="button" aria-label="Save task title" (click)="updateField('title')">Save</button>
+                                    <button type="button" aria-label="Cancel task title edit" (click)="cancelFieldEditing()">Cancel</button>
+                                </div>
+                            } @else {
+                                <div class="task-preview-editable-heading">
+                                    <h2>{{ taskValue('title') }}</h2>
+                                    @if (canEditField('title')) {
+                                        <button type="button" class="task-preview-edit-button" aria-label="Edit task title" (click)="startFieldEditing('title')">
+                                            <svg data-p-icon="pencil"></svg>
+                                        </button>
+                                    }
+                                </div>
+                            }
                         </div>
                         <button
                             pButton
@@ -31,46 +51,114 @@
                         <main class="task-preview-main">
                             <section class="task-preview-section">
                                 <h3>Description</h3>
-                                <p>{{ task().description || 'Not Added' }}</p>
+                                @if (editingField() === 'description') {
+                                    <div class="task-preview-inline-editor task-preview-textarea-editor">
+                                        <textarea rows="4" [value]="draftValue()" aria-label="Update task description" (input)="updateDraft($event)"></textarea>
+                                        <button type="button" (click)="updateField('description')">Save</button>
+                                        <button type="button" (click)="cancelFieldEditing()">Cancel</button>
+                                    </div>
+                                } @else {
+                                    <div class="task-preview-editable-value">
+                                        <p>{{ taskValue('description') || 'Not Added' }}</p>
+                                        @if (canEditField('description')) {
+                                            <button type="button" class="task-preview-edit-button" aria-label="Edit task description" (click)="startFieldEditing('description')">
+                                                <svg data-p-icon="pencil"></svg>
+                                            </button>
+                                        }
+                                    </div>
+                                }
                             </section>
 
                             <section class="task-preview-section">
                                 <h3>Acceptance Criteria</h3>
-                                <p>{{ task().acpt_criteria || 'Not Added' }}</p>
-                            </section>
-
-                            <section class="task-preview-section">
-                                <div class="task-preview-section-heading">
-                                    <h3>Comments</h3>
-                                    <span>{{ mockComments.length }}</span>
-                                </div>
-                                @for (comment of mockComments; track comment.author) {
-                                    <article class="task-comment">
-                                        <span class="task-preview-avatar" [style.background-color]="getAvatarColor(comment.initials)">{{ comment.initials }}</span>
-                                        <div>
-                                            <div class="task-comment-meta">
-                                                <strong>{{ comment.author }}</strong>
-                                                <span>{{ comment.timestamp }}</span>
-                                            </div>
-                                            <p>{{ comment.text }}</p>
-                                        </div>
-                                    </article>
-                                }
-                                <div class="task-comment-composer">
-                                    <span class="task-preview-avatar" [style.background-color]="getAvatarColor('U')">U</span>
-                                    <textarea rows="3" placeholder="Write a comment..." aria-label="Write a comment"></textarea>
-                                </div>
-                                <button pButton type="button" severity="primary" class="task-preview-comment-button" disabled>Comment</button>
-                            </section>
-
-                            <section class="task-preview-section">
-                                <h3>Activity</h3>
-                                @for (activity of historyEntries; track activity.key) {
-                                    <div class="task-activity">
-                                        <span class="task-preview-avatar" [style.background-color]="getAvatarColor(getAssigneeInitials())">{{ getAssigneeInitials() }}</span>
-                                        <span>{{ activity.entry.visible }}</span>
-                                        <time>{{ activity.entry.timestamp * 1000 | date: 'mediumDate' }}</time>
+                                @if (editingField() === 'acpt_criteria') {
+                                    <div class="task-preview-inline-editor task-preview-textarea-editor">
+                                        <textarea rows="4" [value]="draftValue()" aria-label="Update acceptance criteria" (input)="updateDraft($event)"></textarea>
+                                        <button type="button" (click)="updateField('acpt_criteria')">Save</button>
+                                        <button type="button" (click)="cancelFieldEditing()">Cancel</button>
                                     </div>
+                                } @else {
+                                    <div class="task-preview-editable-value">
+                                        <p>{{ taskValue('acpt_criteria') || 'Not Added' }}</p>
+                                        @if (canEditField('acpt_criteria')) {
+                                            <button type="button" class="task-preview-edit-button" aria-label="Edit acceptance criteria" (click)="startFieldEditing('acpt_criteria')">
+                                                <svg data-p-icon="pencil"></svg>
+                                            </button>
+                                        }
+                                    </div>
+                                }
+                            </section>
+
+                            <section class="task-preview-section">
+                                <div class="task-preview-history-heading">
+                                    <div class="task-preview-history-pills" role="tablist" aria-label="Task history">
+                                        <button
+                                            type="button"
+                                            class="task-preview-history-pill"
+                                            [class.active]="activeHistoryView() === 'comments'"
+                                            role="tab"
+                                            [attr.aria-selected]="activeHistoryView() === 'comments'"
+                                            (click)="activeHistoryView.set('comments')"
+                                        >
+                                            Comments
+                                        </button>
+                                        <button
+                                            type="button"
+                                            class="task-preview-history-pill"
+                                            [class.active]="activeHistoryView() === 'activity'"
+                                            role="tab"
+                                            [attr.aria-selected]="activeHistoryView() === 'activity'"
+                                            (click)="activeHistoryView.set('activity')"
+                                        >
+                                            Activity
+                                        </button>
+                                    </div>
+                                </div>
+
+                                @if (activeHistoryView() === 'comments') {
+                                    @for (comment of mockComments; track comment.author) {
+                                        <article class="task-comment">
+                                            <span class="task-preview-avatar" [style.background-color]="getAvatarColor(comment.initials)">{{ comment.initials }}</span>
+                                            <div>
+                                                <div class="task-comment-meta">
+                                                    <strong>{{ comment.author }}</strong>
+                                                    <span>{{ comment.timestamp }}</span>
+                                                </div>
+                                                <p>{{ comment.text }}</p>
+                                            </div>
+                                        </article>
+                                    }
+                                    <div class="task-comment-composer">
+                                        <span class="task-preview-avatar" [style.background-color]="getAvatarColor('U')">U</span>
+                                        <textarea rows="3" placeholder="Write a comment..." aria-label="Write a comment"></textarea>
+                                    </div>
+                                    <button pButton type="button" severity="primary" class="task-preview-comment-button" disabled>Comment</button>
+                                } @else {
+                                    <p-timeline [value]="historyEntries" class="task-preview-timeline">
+                                    <ng-template #opposite let-activity>
+                                        <time class="task-preview-timeline-time">
+                                            <span class="task-preview-timeline-date">
+                                                {{ activity.entry.timestamp * 1000 | date: 'MMM d, y' }}
+                                            </span>
+                                            <span class="task-preview-timeline-clock">
+                                                {{ activity.entry.timestamp * 1000 | date: 'h:mm a' }}
+                                            </span>
+                                        </time>
+                                    </ng-template>
+                                    <ng-template #marker let-activity>
+                                        <span
+                                            class="task-preview-timeline-marker"
+                                            [style.background-color]="getAvatarColor(getHistoryInitial(activity.entry.visible))"
+                                        >
+                                            {{ getHistoryInitial(activity.entry.visible) }}
+                                        </span>
+                                    </ng-template>
+                                    <ng-template #content let-activity>
+                                        <div class="task-preview-timeline-content">
+                                            {{ activity.entry.visible }}
+                                        </div>
+                                    </ng-template>
+                                    </p-timeline>
                                 }
                             </section>
                         </main>
@@ -78,48 +166,184 @@
                         <aside class="task-preview-details">
                             <div>
                                 <h3>Status</h3>
-                                <span class="task-preview-status-chip" [class]="'status-' + task().status.toLowerCase()">
-                                    {{ formatStatus(task().status) }}
-                                </span>
+                                <div class="task-preview-status-field">
+                                    @if (statusEditing()) {
+                                        <select
+                                            class="task-preview-status-select"
+                                            [value]="status()"
+                                            [disabled]="statusSaving()"
+                                            aria-label="Update task status"
+                                            (change)="updateStatus($event)"
+                                        >
+                                            @for (option of statusOptions; track option) {
+                                                <option [value]="option" [selected]="option === status()">
+                                                    {{ formatStatus(option) }}
+                                                </option>
+                                            }
+                                        </select>
+                                    } @else {
+                                        <span class="task-preview-status-chip" [class]="'status-' + status().toLowerCase()">
+                                            {{ formatStatus(status()) }}
+                                        </span>
+                                        @if (canEditField('status')) {
+                                            <button
+                                                type="button"
+                                                class="task-preview-edit-button"
+                                                aria-label="Edit task status"
+                                                (click)="startStatusEditing()"
+                                            >
+                                                <svg data-p-icon="pencil"></svg>
+                                            </button>
+                                        }
+                                    }
+                                </div>
                             </div>
                             <div>
                                 <h3>Priority</h3>
-                                <span class="task-preview-priority">{{ priorityLabel(task().priority) }}</span>
+                                @if (editingField() === 'priority') {
+                                    <div class="task-preview-inline-editor">
+                                        <select [value]="draftValue()" aria-label="Update task priority" (change)="updateDraft($event)">
+                                            @for (option of priorityOptions; track option) {
+                                                <option [value]="option">{{ priorityLabel(option) }}</option>
+                                            }
+                                        </select>
+                                        <button type="button" (click)="updateField('priority')">Save</button>
+                                        <button type="button" (click)="cancelFieldEditing()">Cancel</button>
+                                    </div>
+                                } @else {
+                                    <div class="task-preview-editable-value">
+                                        <span class="task-preview-priority">{{ priorityLabel(taskValue('priority')) }}</span>
+                                        @if (canEditField('priority')) {
+                                            <button type="button" class="task-preview-edit-button" aria-label="Edit task priority" (click)="startFieldEditing('priority')">
+                                                <svg data-p-icon="pencil"></svg>
+                                            </button>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                            <div>
+                                <h3>Category</h3>
+                                @if (editingField() === 'category') {
+                                    <div class="task-preview-inline-editor">
+                                        <select [value]="draftValue()" aria-label="Update task category" (change)="updateDraft($event)">
+                                            @for (option of categoryOptions; track option) {
+                                                <option [value]="option">{{ formatStatus(option) }}</option>
+                                            }
+                                        </select>
+                                        <button type="button" (click)="updateField('category')">Save</button>
+                                        <button type="button" (click)="cancelFieldEditing()">Cancel</button>
+                                    </div>
+                                } @else {
+                                    <div class="task-preview-editable-value">
+                                        <span>{{ formatStatus(taskValue('category')) }}</span>
+                                        @if (canEditField('category')) {
+                                            <button type="button" class="task-preview-edit-button" aria-label="Edit task category" (click)="startFieldEditing('category')">
+                                                <svg data-p-icon="pencil"></svg>
+                                            </button>
+                                        }
+                                    </div>
+                                }
                             </div>
                             <div>
                                 <h3>Assignee</h3>
-                                <span class="task-detail-person">
-                                    <span class="task-preview-avatar" [style.background-color]="getAvatarColor(getAssigneeInitials())">{{ getAssigneeInitials() }}</span>
-                                    {{ getAssigneeName() }}
-                                </span>
+                                @if (editingField() === 'assignee_id') {
+                                    <div class="task-preview-inline-editor">
+                                        <select class="task-preview-assignee-select" aria-label="Update task assignee" (change)="updateAssignee($event)">
+                                            <option value="" [selected]="!taskValue('assignee_id')">Unassigned</option>
+                                            @for (member of teamMembers(); track member.id) {
+                                                <option [value]="member.id" [selected]="member.id === taskValue('assignee_id')">{{ getAssigneeDisplayName(member) }}</option>
+                                            }
+                                        </select>
+                                        @if (!teamMembers().length) {
+                                            <small class="task-preview-inline-editor-empty">No team members found</small>
+                                        }
+                                    </div>
+                                } @else {
+                                    <div class="task-preview-editable-value">
+                                        <span class="task-detail-person">
+                                            <span class="task-preview-avatar" [style.background-color]="getAvatarColor(getAssigneeInitials())">{{ getAssigneeInitials() }}</span>
+                                            {{ getAssigneeName() }}
+                                        </span>
+                                        @if (canEditField('assignee_id')) {
+                                            <button type="button" class="task-preview-edit-button" aria-label="Edit task assignee" (click)="startFieldEditing('assignee_id')">
+                                                <svg data-p-icon="pencil"></svg>
+                                            </button>
+                                        }
+                                    </div>
+                                }
                             </div>
                             <div>
                                 <h3>Team</h3>
-                                @if (teamLoading()) {
+                                @if (editingField() === 'team_id') {
+                                    <div class="task-preview-inline-editor">
+                                        <input type="text" [value]="draftValue()" aria-label="Update task team ID" (input)="updateDraft($event)" />
+                                        <button type="button" (click)="updateField('team_id')">Save</button>
+                                        <button type="button" (click)="cancelFieldEditing()">Cancel</button>
+                                    </div>
+                                } @else if (teamLoading()) {
                                     <span class="task-preview-team-loading" aria-label="Loading team"></span>
                                 } @else {
-                                    <span class="task-preview-team">
-                                        <span class="task-preview-team-icon">{{ getTeamShortName() }}</span>
-                                        <span>{{ getTeamName() }}</span>
-                                    </span>
+                                    <div class="task-preview-editable-value">
+                                        <span class="task-preview-team">
+                                            <span class="task-preview-team-icon">{{ getTeamShortName() }}</span>
+                                            <span>{{ getTeamName() }}</span>
+                                        </span>
+                                        @if (canEditField('team_id')) {
+                                            <button type="button" class="task-preview-edit-button" aria-label="Edit task team" (click)="startFieldEditing('team_id')">
+                                                <svg data-p-icon="pencil"></svg>
+                                            </button>
+                                        }
+                                    </div>
                                 }
                             </div>
                             <div>
                                 <h3>Project</h3>
-                                <span>{{ task().proj_name || '—' }}</span>
+                                @if (editingField() === 'proj_name') {
+                                    <div class="task-preview-inline-editor">
+                                        <input type="text" [value]="draftValue()" aria-label="Update task project" (input)="updateDraft($event)" />
+                                        <button type="button" (click)="updateField('proj_name')">Save</button>
+                                        <button type="button" (click)="cancelFieldEditing()">Cancel</button>
+                                    </div>
+                                } @else {
+                                    <div class="task-preview-editable-value">
+                                        <span>{{ taskValue('proj_name') || '—' }}</span>
+                                        @if (canEditField('proj_name')) {
+                                            <button type="button" class="task-preview-edit-button" aria-label="Edit task project" (click)="startFieldEditing('proj_name')">
+                                                <svg data-p-icon="pencil"></svg>
+                                            </button>
+                                        }
+                                    </div>
+                                }
                             </div>
                             <div>
                                 <h3>Due date</h3>
-                                <span [class.task-preview-overdue]="task().deadline < currentTime">
-                                    {{ task().deadline * 1000 | date: 'mediumDate' }}
-                                </span>
+                                @if (editingField() === 'deadline') {
+                                    <div class="task-preview-inline-editor">
+                                        <input type="date" [value]="draftValue()" aria-label="Update task due date" (input)="updateDraft($event)" />
+                                        <button type="button" (click)="updateField('deadline')">Save</button>
+                                        <button type="button" (click)="cancelFieldEditing()">Cancel</button>
+                                    </div>
+                                } @else {
+                                    <div class="task-preview-editable-value">
+                                        <span [class.task-preview-overdue]="taskValue('deadline') < currentTime">
+                                            {{ taskValue('deadline') * 1000 | date: 'mediumDate' }}
+                                        </span>
+                                        @if (canEditField('deadline')) {
+                                            <button type="button" class="task-preview-edit-button" aria-label="Edit task due date" (click)="startFieldEditing('deadline')">
+                                                <svg data-p-icon="pencil"></svg>
+                                            </button>
+                                        }
+                                    </div>
+                                }
                             </div>
                             <div>
                                 <h3>Created by</h3>
-                                <span class="task-detail-person">
-                                    <span class="task-preview-avatar" [style.background-color]="getAvatarColor(getReporterInitials())">{{ getReporterInitials() }}</span>
-                                    {{ task().reporter_username }}
-                                </span>
+                                <div class="task-preview-editable-value task-preview-readonly-value">
+                                    <span class="task-detail-person">
+                                        <span class="task-preview-avatar" [style.background-color]="getAvatarColor(getReporterInitials())">{{ getReporterInitials() }}</span>
+                                        {{ taskValue('reporter_username') }}
+                                    </span>
+                                </div>
                             </div>
                         </aside>
                     </div>

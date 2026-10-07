@@ -27,4 +27,14 @@ export class TasksService {
         const url = `${BASE_URL}/tasks/create`;
         return this.http.post<TasksResponse>(url, task);
     }
+
+    updateTask(taskId: string, field: string, value: unknown): Observable<unknown> {
+        const url = `${BASE_URL}/task/update/${taskId}`;
+        return this.http.put(url, { [field]: value });
+    }
+
+    updateTaskAssignee(taskId: string, assigneeId: string | null): Observable<unknown> {
+        const url = `${BASE_URL}/task/update-assignee/${taskId}`;
+        return this.http.put(url, { assignee_id: assigneeId });
+    }
 }
