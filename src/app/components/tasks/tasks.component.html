@@ -152,7 +152,7 @@
                     </thead>
                     <tbody>
                         @for (task of filteredTasks(); track task.id) {
-                            <tr>
+                            <tr class="task-row" (click)="previewTask(task)">
                                 <td class="task-title-cell">
                                     <span class="task-id">{{ task.id }}</span>
                                     <strong>{{ task.title }}</strong>
@@ -162,7 +162,7 @@
                                 </td>
                                 <td>
                                     <span class="assignee">
-                                        <span class="assignee-avatar">
+                                        <span class="assignee-avatar" [style.background-color]="getAvatarColor(getAssigneeInitials(task))">
                                             {{ getAssigneeInitials(task) }}
                                         </span>
                                         {{ task.assignee_username || 'Unassigned' }}
@@ -193,4 +193,8 @@
             <div class="empty-state">No tasks available.</div>
         }
     </section>
+}
+
+@if (selectedTask(); as task) {
+    <bw-task-preview [task]="task" (closed)="closeTaskPreview()" />
 }

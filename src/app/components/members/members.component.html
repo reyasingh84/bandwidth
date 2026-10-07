@@ -45,6 +45,7 @@
                                     [label]="getInitials(user)"
                                     shape="circle"
                                     styleClass="member-avatar"
+                                    [style]="{ 'background-color': getAvatarColor(user), color: '#fff' }"
                                 />
                                 <div>
                                     <strong>{{ getFullName(user) }}</strong>

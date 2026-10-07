@@ -10,9 +10,11 @@ import { TeamsService } from '../../services/teams/teams.service';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { computed } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
+import { TaskPreviewComponent } from '../task-preview/task-preview.component';
+import { getAvatarColor } from '../../utils/avatar';
 
 @Component({
-  imports: [Spinner, DatePipe, KeyValuePipe, SplitButtonModule, ButtonModule, ReactiveFormsModule],
+  imports: [Spinner, DatePipe, KeyValuePipe, SplitButtonModule, ButtonModule, ReactiveFormsModule, TaskPreviewComponent],
   selector: 'bw-tasks',
   styleUrl: './tasks.component.css',
   templateUrl: './tasks.component.html',
@@ -33,9 +35,18 @@ export class TasksComponent implements OnInit{
   selectedPriority = signal('all');
   isAddingTask = false;
   isSubmittingTask = false;
+  selectedTask = signal<TaskInfo | null>(null);
 
   get isAdmin(): boolean {
     return this.userService.getUserInfo()?.role?.trim().toLowerCase() === 'admin';
+  }
+
+  previewTask(task: TaskInfo): void {
+    this.selectedTask.set(task);
+  }
+
+  closeTaskPreview(): void {
+    this.selectedTask.set(null);
   }
 
   filteredTasks = computed(() => {
@@ -240,6 +251,10 @@ export class TasksComponent implements OnInit{
     return nameParts.length > 1
       ? `${nameParts[0].charAt(0)}${nameParts[nameParts.length - 1].charAt(0)}`.toUpperCase()
       : username.slice(0, 2).toUpperCase();
+  }
+
+  getAvatarColor(value: string): string {
+    return getAvatarColor(value);
   }
 
   fetchTasks(){

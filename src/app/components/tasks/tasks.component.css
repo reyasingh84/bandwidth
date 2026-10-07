@@ -26,6 +26,7 @@
 :host ::ng-deep .add-task-button.p-button:hover {
     border-color: #304bc0;
     background: #304bc0;
+    box-shadow: 0 0 0.8rem rgb(57 100 216 / 35%);
 }
 
 .tasks-header h1 {
@@ -94,7 +95,9 @@
 
 :host ::ng-deep .task-filters .p-splitbutton .p-button:hover {
     border-color: #3964d8;
+    background: #edf2ff;
     color: #3964d8;
+    box-shadow: 0 0 0.65rem rgb(57 100 216 / 24%);
 }
 
 .tasks-table-wrapper {
@@ -167,6 +170,10 @@
 
 .tasks-table tbody tr:hover {
     background: #fbfcff;
+}
+
+.task-row {
+    cursor: pointer;
 }
 
 .task-title-cell {
@@ -400,6 +407,7 @@
 :host ::ng-deep .task-submit-button.p-button:hover {
     border-color: #304bc0;
     background: #304bc0;
+    box-shadow: 0 0 0.8rem rgb(57 100 216 / 35%);
 }
 
 .tasks-loader {

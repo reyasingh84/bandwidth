@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { UsersService } from '../../services/users/users.service';
 import { TeamsService } from '../../services/teams/teams.service';
+import { getAvatarColor } from '../../utils/avatar';
 import { User, UsersResponse } from '../../models/user.model';
 import { Spinner } from '@primeicons/angular/spinner';
 import { TableModule } from 'primeng/table';
@@ -93,6 +94,10 @@ export class MembersComponent implements OnInit {
     const firstInitial = user.first_name?.charAt(0) ?? '';
     const lastInitial = user.last_name?.charAt(0) ?? '';
     return `${firstInitial}${lastInitial}`.toUpperCase() || user.username.slice(0, 2).toUpperCase();
+  }
+
+  getAvatarColor(user: User): string {
+    return getAvatarColor(this.getInitials(user));
   }
 
   getTeamName(user: User): string {
