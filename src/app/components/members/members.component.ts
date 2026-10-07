@@ -61,7 +61,6 @@ export class MembersComponent implements OnInit {
         this.isLoadingData.set(false);
       },
       error: (error) => {
-        console.error('Unable to load members', error);
         this.isLoadingData.set(false);
       },
     });
@@ -81,7 +80,6 @@ export class MembersComponent implements OnInit {
         this.teamNames.set(names);
       },
       error: (error) => {
-        console.error('Unable to load member team names', error);
       },
     });
   }

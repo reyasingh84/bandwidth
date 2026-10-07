@@ -248,10 +248,15 @@
                                 <h3>Assignee</h3>
                                 @if (editingField() === 'assignee_id') {
                                     <div class="task-preview-inline-editor">
-                                        <select class="task-preview-assignee-select" aria-label="Update task assignee" (change)="updateAssignee($event)">
-                                            <option value="" [selected]="!taskValue('assignee_id')">Unassigned</option>
+                                        <select
+                                            class="task-preview-assignee-select"
+                                            [value]="taskValue('assignee_id') || ''"
+                                            aria-label="Update task assignee"
+                                            (change)="updateAssignee($event)"
+                                        >
+                                            <option value="">Unassigned</option>
                                             @for (member of teamMembers(); track member.id) {
-                                                <option [value]="member.id" [selected]="member.id === taskValue('assignee_id')">{{ getAssigneeDisplayName(member) }}</option>
+                                                <option [value]="member.id">{{ getAssigneeDisplayName(member) }}</option>
                                             }
                                         </select>
                                         @if (!teamMembers().length) {

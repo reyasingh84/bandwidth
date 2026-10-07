@@ -86,8 +86,7 @@ export class TasksComponent implements OnInit{
         }, {});
         this.teamNames.set(names);
       },
-      error: (err) => {
-        console.error('Unable to load team names', err);
+      error: () => {
       },
     });
   }
@@ -114,7 +113,7 @@ export class TasksComponent implements OnInit{
 
   readonly priorityFilterItems: MenuItem[] = [
     { label: 'All priorities', command: () => this.selectedPriority.set('all') },
-    { label: 'Critical', command: () => this.selectedPriority.set('Critical') },
+    { label: 'Very High', command: () => this.selectedPriority.set('Very High') },
     { label: 'High', command: () => this.selectedPriority.set('High') },
     { label: 'Medium', command: () => this.selectedPriority.set('Medium') },
     { label: 'Low', command: () => this.selectedPriority.set('Low') },
@@ -189,12 +188,10 @@ export class TasksComponent implements OnInit{
     this.isLoadingTeamMembers.set(true);
     this.teamsService.getTeamMembers(teamId).subscribe({
       next: (members) => {
-        console.log('Create task team members', members);
         this.teamMembers.set(members);
         this.isLoadingTeamMembers.set(false);
       },
       error: (error) => {
-        console.error('Unable to load create task team members', error);
         this.isLoadingTeamMembers.set(false);
       },
     });
@@ -255,7 +252,6 @@ export class TasksComponent implements OnInit{
         this.fetchTasks();
       },
       error: (error) => {
-        console.error('Unable to create task', error);
         this.isSubmittingTask = false;
         const validationDetail = error.error?.detail;
         this.messageService.add({
@@ -314,7 +310,6 @@ export class TasksComponent implements OnInit{
         this.isLoadingData.set(false);
       },
       error:(err)=>{
-        console.error('Unable to load tasks', err);
         this.isLoadingData.set(false);
       },
     })
@@ -325,18 +320,6 @@ export class TasksComponent implements OnInit{
   }
 
   priorityLabel(priority: number): string {
-    if (priority >= 8) {
-      return 'Critical';
-    }
-
-    if (priority >= 5) {
-      return 'High';
-    }
-
-    if (priority >= 3) {
-      return 'Medium';
-    }
-
-    return 'Low';
+    return ['Very Low', 'Low', 'Medium', 'High', 'Very High'][Math.max(0, Math.min(priority, 5) - 1)] ?? 'Very Low';
   }
 }

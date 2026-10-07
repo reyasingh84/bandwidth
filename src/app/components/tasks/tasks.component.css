@@ -246,6 +246,16 @@
     color: #d94a4a;
 }
 
+.priority-very-high {
+    background: #fff0f0;
+    color: #d94a4a;
+}
+
+.priority-very-low {
+    background: #f1f3f7;
+    color: #71809d;
+}
+
 .priority-high {
     background: #fff6df;
     color: #b7791f;

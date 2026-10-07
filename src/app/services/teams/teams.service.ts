@@ -18,8 +18,6 @@ export class TeamsService {
         const url = `${BASE_URL}/teams/${teamId}`;
         return this.http.get<unknown>(url).pipe(
             map((response) => {
-                console.log('Team detail API response', response);
-
                 const payload = response as {
                     response?: Record<string, unknown>;
                     team?: Record<string, unknown>;
@@ -42,8 +40,6 @@ export class TeamsService {
         const url = `${BASE_URL}/team/users/${teamId}`;
         return this.http.get<unknown>(url).pipe(
             map((response) => {
-                console.log('Team members API response', response);
-
                 if (Array.isArray(response)) {
                     return response as User[];
                 }

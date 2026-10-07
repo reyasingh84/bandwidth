@@ -62,8 +62,7 @@ export class LoginComponent implements OnInit {
           severity: "success"
         })
       },
-      error: (err)=> {
-        console.log(err);
+      error: ()=> {
         this.isSigningIn = false;
         this.messageService.add({
           severity: "error",

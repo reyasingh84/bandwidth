@@ -41,7 +41,6 @@ export class TeamsComponent implements OnInit {
         this.isLoadingData.set(false);
       },
       error: (err) => {
-        console.error('Unable to load teams', err);
         this.isLoadingData.set(false);
       },
     });
@@ -89,7 +88,6 @@ export class TeamsComponent implements OnInit {
         this.editingTeam = null;
       },
       error: (error) => {
-        console.error(`Unable to ${this.editingTeam ? 'update' : 'create'} team`, error);
         this.isSubmittingTeam = false;
         this.messageService.add({
           severity: 'error',

@@ -159,8 +159,7 @@ export class DashboardComponent implements OnInit {
         this.overdueTaskStats.set(response?.overdue_task_count);
         this.isDataLoading.set(false);
       },
-      error: (err)=> {
-        console.log(err);
+      error: ()=> {
         this.messageService.add({
           summary: "Failed to Load Data.",
           detail: "Something went wrong.",
@@ -168,7 +167,6 @@ export class DashboardComponent implements OnInit {
         });
         this.isDataLoading.set(false);
       },
-      complete: ()=> {console.log("Completed")}
     })
   }
 
@@ -181,15 +179,13 @@ export class DashboardComponent implements OnInit {
           completion: team.total > 0 ? Math.round((team.closed / team.total) * 100) : 0,
         })));
       },
-      error: (err)=>{
-        console.log(err);
+      error: ()=>{
         this.messageService.add({
           summary: "Failed to Load Data.",
           detail: "Something went wrong.",
           severity: 'error'
         })
       },
-      complete: ()=>{ console.log("completed")}
     })
   }
 

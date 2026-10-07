@@ -67,12 +67,10 @@ export class TaskPreviewComponent {
       this.teamLoading.set(true);
       this.teamsService.getTeamById(teamId).subscribe({
         next: (team) => {
-          console.log('Task preview team response', team);
           this.teamName.set(team?.name ?? teamId);
           this.teamShortName.set(team?.short_name ?? '');
         },
         error: (error) => {
-          console.error('Unable to load task team', error);
           this.teamName.set(teamId);
           this.teamLoading.set(false);
         },
@@ -82,10 +80,8 @@ export class TaskPreviewComponent {
       this.teamsService.getTeamMembers(teamId).subscribe({
         next: (members) => {
           this.teamMembers.set(members);
-          console.log('Task preview team members', members);
         },
         error: (error) => {
-          console.error('Task preview team members could not be loaded', error);
           this.teamMembers.set([]);
         },
       });
@@ -216,7 +212,6 @@ export class TaskPreviewComponent {
         this.savingField.set(null);
       },
       error: (error) => {
-        console.error(`Unable to update task ${String(field)}`, error);
         this.savingField.set(null);
       },
     });
@@ -251,7 +246,6 @@ export class TaskPreviewComponent {
         this.savingField.set(null);
       },
       error: (error) => {
-        console.error('Unable to update task assignee', error);
         this.savingField.set(null);
       },
     });
@@ -312,7 +306,6 @@ export class TaskPreviewComponent {
         this.statusSaving.set(false);
       },
       error: (error) => {
-        console.error('Unable to update task status', error);
         this.status.set(previousStatus);
         this.statusEditing.set(false);
         this.statusSaving.set(false);
@@ -321,15 +314,7 @@ export class TaskPreviewComponent {
   }
 
   priorityLabel(priority: number): string {
-    if (priority >= 5) {
-      return 'High';
-    }
-
-    if (priority >= 3) {
-      return 'Medium';
-    }
-
-    return 'Low';
+    return ['Very Low', 'Low', 'Medium', 'High', 'Very High'][Math.max(0, Math.min(priority, 5) - 1)] ?? 'Very Low';
   }
 
   close(): void {
